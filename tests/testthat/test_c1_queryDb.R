@@ -1,13 +1,15 @@
 context("Occ Data")
-library(stringr)
+library(wallace)
 source("test_helper_functions.R")
 
-occNum <- 1000
 out.gbif <- c1_queryDb(spName = "Meles meles", occDb = "gbif", occNum = 1000)
-out.gbif.latlon <- out.gbif$orig[!is.na(out.gbif$orig$latitude) & !is.na(out.gbif$orig$longitude),]
-out.gbif.dups <- out.gbif.latlon[!duplicated(out.gbif.latlon[,c('longitude','latitude')]),]
 
-test_that("general checks on occurrence data", {
-  expect_equal(occNum, nrow(out.gbif$orig))
-  expect_equal(nrow(out.gbif.dups), nrow(out.gbif$cleaned))
+test_that("output checks", {
+  expect_is(out.gbif, "list")
+  expect_equal(length(out.gbif), 2)
+  expect_error(c1_queryDb(spName = "", occDb = "gbif", occNum = 1000), 'Please input both genus and species names.')
+})
+
+test_that("occs data frame checks", {
+  expect_equal(1000, nrow(out.gbif$orig))
 })

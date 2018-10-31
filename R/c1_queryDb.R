@@ -27,6 +27,7 @@ c1_queryDb <- function(spName, occDb, occNum, shinyLogs=NULL) {
   # if two names not entered, throw error and return
   if (nameSplit != 2) {
     shinyLogs %>% writeLog(type = 'error', 'Please input both genus and species names.')
+    stop("Please input both genus and species names.")
     return()
   }
 
