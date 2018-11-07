@@ -115,15 +115,14 @@ writeSpp <- function(spp, sp, dir) {
 # add text to log
 writeLog <- function(logs, ..., type = 'default') {
   if (is.null(logs)) {
+    msg <- paste(..., collapse = "")
     if (type == "default") {
-      pre <- "> "
+      message(msg)
     } else if (type == 'error') {
-      pre <- 'ERROR: '
+      stop(msg)
     } else if (type == 'warning') {
-      pre <- 'WARNING: '
+      warning(msg)
     }  
-    newEntries <- paste(pre, ..., collapse = "")
-    message(newEntries)
     return()
   }
   
