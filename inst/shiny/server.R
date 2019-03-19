@@ -1285,6 +1285,18 @@ shinyServer(function(input, output, session) {
       }
     }
   )
+  
+  ########################################### #
+  ### COMPONENT: POST-PROCESSING ####
+  ########################################### #
+  
+  # user SDM
+  # output$userSDM_UI <- renderUI({
+  #   req(!exists("pepe"))
+  #   fileInput("userSDM", label = "Input SDM (**)")
+  #   actionButton('goUserSDM', 'Load')
+  # })
+  
   ########################################### #
   ### RMARKDOWN FUNCTIONALITY ####
   ########################################### #
@@ -1355,16 +1367,6 @@ shinyServer(function(input, output, session) {
     }
   )
   
-  ########################################### #
-  ### COMPONENT: POST-PROCESSING ####
-  ########################################### #
-  
-  # user SDM
-  output$userSDM_UI <- renderUI({
-    req(!exists("pepe"))
-    fileInput("userSDM", label = "Input SDM (**)")
-    actionButton('goUserSDM', 'Load')
-  })
   
   ################################
   ### METADATA FUNCTIONALITY ####
