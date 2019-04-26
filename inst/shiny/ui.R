@@ -549,9 +549,9 @@ tagList(
             h4("Post-processing(**)"),
             radioButtons(
               "maskSel", "Modules Available:",
-              choices = list("Olinguito(**)" = 'olinMask',
-                             "Biomodelos(**)" = 'biomMask'),
-              selected = 'olinMask'),
+              choices = list("Add/Remove area (**)" = 'addRemoMask',
+                             "Olinguito(**)" = 'olinMask'),
+              selected = 'addRemoMask'),
             HTML('<hr>'),
             conditionalPanel(
               "input.maskSel == 'olinMask'",
@@ -561,10 +561,10 @@ tagList(
               HTML('<hr>')
             ),
             conditionalPanel(
-              "input.maskSel == 'biomMask'",
-              uiTop(biomodelos_INFO),
-              biomodelos_UI('mask_biomodelos_uiID'),
-              actionButton("goBiomodelos", "Action (**)"),
+              "input.maskSel == 'addRemoMask'",
+              uiTop(addRemo_INFO),
+              addRemo_UI('mask_addRemo_uiID'),
+              actionButton("goAddRemo", "Action (**)"),
               HTML('<hr>')
             ),
             conditionalPanel(
@@ -572,8 +572,8 @@ tagList(
               uiBottom(olinguito_INFO)
             ),
             conditionalPanel(
-              "input.maskSel == 'biomMask'",
-              uiBottom(biomodelos_INFO)
+              "input.maskSel == 'addRemoMask'",
+              uiBottom(addRemo_INFO)
             )
           ),
           # SESSION CODE ####
