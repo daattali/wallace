@@ -129,8 +129,8 @@ function(input, output, session) {
       spp[[curSp()]]$polyPjID <- id
     }
     if(component() == 'mask') {
-      spp[[curSp()]]$mRR_XY <- xy
-      spp[[curSp()]]$mRR_ID <- id
+      spp[[curSp()]]$polyMaskXY <- xy
+      spp[[curSp()]]$polyMaskID <- id
     }
     # UI CONTROLS - for some reason, curSp() disappears here unless input is updated
     updateSelectInput(session, "curSp", selected = curSp())
@@ -159,7 +159,7 @@ function(input, output, session) {
                 "mapPreds" = mapPreds_MAP,
                 "projArea" = projectArea_MAP,
                 "projTime" = projectTime_MAP,
-                "addRemo" = addRemo_MAP,
+                "drawAddRem" = drawAddRem_MAP,
                 "mess" = envSimilarity_MAP)
     req(f)
     map %>% f(session)
