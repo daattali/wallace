@@ -209,13 +209,15 @@ tagList(
               uiTop(userBgExtent_INFO),
               div("Step 1:", id="step"), div("Choose Background Extent", id="stepText"), br(), br(),
               userBgExtent_UI('c4_userBgExtent'),
-              actionButton("goUserBg", "Load")),
+              actionButton("goUserBg", "Load")
+            ),
             conditionalPanel(
               "input.procEnvsSel == 'bgDraw'",
               uiTop(drawBgExtent_INFO),
               div("Step 1:", id="step"), div("Draw Background Extent(**)", id="stepText"), br(), br(),
               drawBgExtent_UI('c4_drawBgExtent'),
-              actionButton("goDrawBg", "Create(**)")),
+              actionButton("goDrawBg", "Create(**)")
+            ),
             conditionalPanel(
               "input.procEnvsSel == 'bgSel' | input.procEnvsSel == 'bgUser' | input.procEnvsSel == 'bgDraw'",
               tags$hr(),
@@ -562,8 +564,22 @@ tagList(
             ),
             conditionalPanel(
               "input.maskSel == 'addRemoMask'",
-              uiTop(addRemo_INFO),
-              addRemo_UI('mask_addRemo_uiID'),
+              radioButtons(
+                "selBgMsk", label = "Select input",
+                choices = list("draw" = 'maskDrawAddRemo',
+                               "user" = 'maskUserAddRemo'),
+                inline = TRUE
+              ),
+              conditionalPanel(
+                "input.selBgMsk == 'maskDrawAddRemo'",
+                drawAddRem_UI('mask_drawAddRem_uiID'),
+                actionButton("goDrawAddRem", "Select")
+              ),
+              conditionalPanel(
+                "input.selBgMsk == 'maskUserAddRemo'",
+                userAddRem_UI('mask_userAddRem_uiID'),
+                actionButton("goUserAddRem", "Select")
+              ),
               actionButton("goAddRemo", "Action (**)"),
               HTML('<hr>')
             ),
