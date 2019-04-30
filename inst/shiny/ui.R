@@ -14,7 +14,7 @@ tagList(
     tabPanel("Model", value='model'),
     tabPanel("Visualize", value='vis'),
     tabPanel("Project", value='proj'),
-    tabPanel("Post-Data(**)", value = 'ppdat'),
+    # tabPanel("Post-Data(**)", value = 'ppdat'),
     tabPanel("maskRR(**)", value = 'mask'),
     tabPanel("Session Code", value='rmd'),
 
@@ -551,46 +551,48 @@ tagList(
             h4("Post-processing(**)"),
             radioButtons(
               "maskSel", "Modules Available:",
-              choices = list("Add/Remove area (**)" = 'addRemoMask',
+              choices = list("Add/Remove area (**)" = 'addRemMask',
                              "Olinguito(**)" = 'olinMask'),
-              selected = 'addRemoMask'),
+              selected = 'addRemMask'),
             HTML('<hr>'),
+            # conditionalPanel(
+            #   "input.maskSel == 'olinMask'",
+            #   uiTop(olinguito_INFO),
+            #   olinguito_UI('mask_olinguito_uiID'),
+            #   actionButton("goOlinguito", "Run (**)"),
+            #   HTML('<hr>')
+            # ),
             conditionalPanel(
-              "input.maskSel == 'olinMask'",
-              uiTop(olinguito_INFO),
-              olinguito_UI('mask_olinguito_uiID'),
-              actionButton("goOlinguito", "Run (**)"),
-              HTML('<hr>')
-            ),
-            conditionalPanel(
-              "input.maskSel == 'addRemoMask'",
+              "input.maskSel == 'addRemMask'",
               radioButtons(
-                "selBgMsk", label = "Select input",
-                choices = list("draw" = 'maskDrawAddRemo',
-                               "user" = 'maskUserAddRemo'),
+                "addRemSel", label = "Select input",
+                choices = list("draw" = 'maskDrawAddRem',
+                               "user" = 'maskUserAddRem'),
                 inline = TRUE
               ),
+              # drawAddRem_UI('mask_drawAddRem_uiID'),
+              # actionButton("goDrawAddRem", "Select"),
               conditionalPanel(
-                "input.selBgMsk == 'maskDrawAddRemo'",
+                "input.addRemSel == 'maskDrawAddRem'",
                 drawAddRem_UI('mask_drawAddRem_uiID'),
                 actionButton("goDrawAddRem", "Select")
               ),
               conditionalPanel(
-                "input.selBgMsk == 'maskUserAddRemo'",
+                "input.addRemSel == 'maskUserAddRem'",
                 userAddRem_UI('mask_userAddRem_uiID'),
                 actionButton("goUserAddRem", "Select")
               ),
               actionButton("goAddRemo", "Action (**)"),
               HTML('<hr>')
-            ),
-            conditionalPanel(
-              "input.maskSel == 'olinMask'",
-              uiBottom(olinguito_INFO)
-            ),
-            conditionalPanel(
-              "input.maskSel == 'addRemoMask'",
-              uiBottom(addRemo_INFO)
-            )
+            )#,
+            # conditionalPanel(
+            #   "input.maskSel == 'olinMask'",
+            #   uiBottom(olinguito_INFO)
+            # ),
+            # conditionalPanel(
+            #   "input.maskSel == 'addRemMask'",
+            #   uiBottom(addRem_INFO)
+            # )
           ),
           # SESSION CODE ####
           conditionalPanel(

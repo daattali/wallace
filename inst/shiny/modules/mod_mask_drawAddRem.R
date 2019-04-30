@@ -8,7 +8,15 @@ drawAddRem_UI <- function(id) {
 drawAddRem_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
-    # GEPB: Add thresholded map error
+    # GEPB: Polygon outside boundaries
+    # GEPB: Add thresholded map error spp[[curSp()]]$postProc$prediction
+    if (is.null(spp[[curSp()]]$postProc$prediction)) {
+      shinyLogs %>% writeLog(
+        type = 'error',
+        "SDM predicion need to be thresholded. Please use a threshold in Visualize component. (**)"
+      )
+      return()
+    }
     if (is.null(spp[[curSp()]]$polyMaskXY)) {
       shinyLogs %>% writeLog(
         type = 'error',
@@ -22,7 +30,7 @@ drawAddRem_MOD <- function(input, output, session) {
                                   shinyLogs)
 
     # LOAD INTO SPP ####
-    spp[[sp]]$mask$polyAddRem <- drawAddRem
+    spp[[curSp()]]$mask$polyAddRem <- drawAddRem
 
     # GEPB: ADD METADATA ####
   })
@@ -40,12 +48,11 @@ drawAddRem_MAP <- function(map, session) {
     editOptions = leaflet.extras::editToolbarOptions()
   )
 
-  req(spp[[curSp()]]$polyMaskXY)
-  polyMaskXY <- spp[[curSp()]]$polyExtXY
-
-  for(shp in bgShpXY()) {
-    map %>% clearAll() %>%
-      addPolygons(lng=shp[,1], lat=shp[,2], weight=4, color="gray", group='bgShp')
-  }
-
+  req(spp[[curSp()]]$mask$polyAddRem)
+  polyMaskXY <- spp[[curSp()]]$polyMaskXY
+  map %>% clearAll() %>%
+    addPolygons(lng = polyMaskXY[,1], lat = polyMaskXY[,2],
+                weight = 4, color = "gray", group = 'maskShp') %>%
+    # add background polygon
+    mapBgPolys(bgShpXY())
 }

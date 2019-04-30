@@ -22,29 +22,29 @@ drawBgExtent_MOD <- function(input, output, session) {
     }
     if (is.null(spp[[curSp()]]$polyExtXY)) {
       shinyLogs %>% writeLog(
-        type = 'error', 
+        type = 'error',
         "The polygon has not been drawn and finished. Please use the draw toolbar on the left-hand of the map to complete the polygon."
       )
       return()
     }
     # FUNCTION CALL ####
-    drawBgExt <- c4_drawBgExtent(spp[[curSp()]]$polyExtXY, 
+    drawBgExt <- c4_drawBgExtent(spp[[curSp()]]$polyExtXY,
                                  spp[[curSp()]]$polyExtID,
-                                 input$drawBgBuf, 
+                                 input$drawBgBuf,
                                  spp[[curSp()]]$occs,
                                  shinyLogs)
-    
+
     # loop over all species if batch is on
     if (input$batch == TRUE)
       spLoop <- allSp()
     else
       spLoop <- curSp()
-    
+
     # PROCESSING ####
     for (sp in spLoop) {
       # LOAD INTO SPP ####
       spp[[sp]]$procEnvs$bgExt <- drawBgExt
-      
+
       # METADATA ####
       polyX <- printVecAsis(round(spp[[curSp()]]$polyExtXY[, 1], digits = 4))
       polyY <- printVecAsis(round(spp[[curSp()]]$polyExtXY[, 2], digits = 4))
@@ -66,16 +66,16 @@ drawBgExtent_MAP <- function(map, session) {
   )
   req(spp[[curSp()]]$polyExtXY)
   polyExtXY <- spp[[curSp()]]$polyExtXY
-  
+
   if(is.null(bgExt())) {
-    map %>% clearAll() %>%     
-      addCircleMarkers(data = occs(), lat = ~latitude, lng = ~longitude, 
-                       radius = 5, color = 'red', fill = TRUE, fillColor = "red", 
+    map %>% clearAll() %>%
+      addCircleMarkers(data = occs(), lat = ~latitude, lng = ~longitude,
+                       radius = 5, color = 'red', fill = TRUE, fillColor = "red",
                        fillOpacity = 0.2, weight = 2, popup = ~pop)
   } else {
     map %>% clearAll() %>%
-      addCircleMarkers(data = occs(), lat = ~latitude, lng = ~longitude, 
-                       radius = 5, color = 'red', fill = TRUE, fillColor = "red", 
+      addCircleMarkers(data = occs(), lat = ~latitude, lng = ~longitude,
+                       radius = 5, color = 'red', fill = TRUE, fillColor = "red",
                        fillOpacity = 0.2, weight = 2, popup = ~pop)
     for(shp in bgShpXY()) {
       map %>%
