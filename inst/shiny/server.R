@@ -81,7 +81,9 @@ function(input, output, session) {
     else if(component() == "model") input$modelSel
     else if(component() == "vis") input$visSel
     else if(component() == "proj") input$projSel
-    else if(component() == "mask") input$maskSel
+    else if(component() == "mask") {
+      if (input$maskSel == 'addRemMask') input$addRemSel
+    }
     #else if(component() == "rmd") ''
   })
 
@@ -159,8 +161,8 @@ function(input, output, session) {
                 "mapPreds" = mapPreds_MAP,
                 "projArea" = projectArea_MAP,
                 "projTime" = projectTime_MAP,
-                "drawAddRem" = drawAddRem_MAP,
-                "mess" = envSimilarity_MAP)
+                "mess" = envSimilarity_MAP,
+                "maskDrawAddRem" = drawAddRem_MAP)
     req(f)
     map %>% f(session)
   })
@@ -487,8 +489,6 @@ function(input, output, session) {
     req(input$map_draw_new_feature)
     selOccs <- callModule(selectOccs_MOD, 'c2_selOccs_uiID')
     selOccs()
-    # UI CONTROLS
-    #updateSelectInput(session, "curSp", selected = curSp())
   })
 
   # # # # # # # # # # # # # #
@@ -823,8 +823,6 @@ function(input, output, session) {
 
   output$evalTbls <- renderUI({
     req(evalOut())
-
-    print(names(evalOut()@models))
     res <- evalOut()@results
     res.grp <- evalOut()@results.grp
     tuned.n <- ncol(evalOut()@tuned.settings)
@@ -1294,12 +1292,21 @@ function(input, output, session) {
   ### COMPONENT: POST-PROCESSING ####
   ########################################### #
 
-  # user SDM
-  # output$userSDM_UI <- renderUI({
-  #   req(!exists("pepe"))
-  #   fileInput("userSDM", label = "Input SDM (**)")
-  #   actionButton('goUserSDM', 'Load')
-  # })
+  # # # # # # # # # # # # # # # # # # # # #
+  # sub-module draw polygon add/remove on Map ####
+  # # # # # # # # # # # # # # # # # # # # #
+  observeEvent(input$goDrawAddRem, {
+    #req(input$map_draw_new_feature)
+    drawAddRem <- callModule(drawAddRem_MOD, 'mask_drawAddRem_uiID')
+    drawAddRem()
+    # MAPPING
+    # map %>%
+      # reset draw polygon
+      # leaflet.extras::removeDrawToolbar(clearFeatures = TRUE) %>%
+      # leaflet.extras::addDrawToolbar(targetGroup = 'draw', polylineOptions = FALSE,
+                                     # rectangleOptions = FALSE, circleOptions = FALSE,
+                                     # markerOptions = FALSE, circleMarkerOptions = FALSE)
+  })
 
   ########################################### #
   ### RMARKDOWN FUNCTIONALITY ####

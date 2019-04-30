@@ -8,6 +8,7 @@ drawAddRem_UI <- function(id) {
 drawAddRem_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
+    # GEPB: Polygon outside boundaries
     # GEPB: Add thresholded map error
     if (is.null(spp[[curSp()]]$polyMaskXY)) {
       shinyLogs %>% writeLog(
@@ -22,7 +23,7 @@ drawAddRem_MOD <- function(input, output, session) {
                                   shinyLogs)
 
     # LOAD INTO SPP ####
-    spp[[sp]]$mask$polyAddRem <- drawAddRem
+    spp[[curSp()]]$mask$polyAddRem <- drawAddRem
 
     # GEPB: ADD METADATA ####
   })
@@ -30,6 +31,7 @@ drawAddRem_MOD <- function(input, output, session) {
 
 drawAddRem_MAP <- function(map, session) {
   updateTabsetPanel(session, 'main', selected = 'Map')
+  # map %>% clearAll()
   map %>% leaflet.extras::addDrawToolbar(
     targetGroup = 'draw',
     polylineOptions = FALSE,
@@ -41,11 +43,9 @@ drawAddRem_MAP <- function(map, session) {
   )
 
   req(spp[[curSp()]]$polyMaskXY)
-  polyMaskXY <- spp[[curSp()]]$polyExtXY
+  polyMaskXY <- spp[[curSp()]]$polyMaskXY
 
-  for(shp in bgShpXY()) {
-    map %>% clearAll() %>%
-      addPolygons(lng=shp[,1], lat=shp[,2], weight=4, color="gray", group='bgShp')
-  }
-
+  map %>%
+    addPolygons(lng = polyMaskXY[,1], lat = polyMaskXY[,2],
+                weight = 4, color = "gray", group = 'maskShp')
 }

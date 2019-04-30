@@ -9,14 +9,14 @@ removeByID_UI <- function(id) {
 removeByID_MOD <- function(input, output, session) {
   reactive({
     # FUNCTION CALL ####
-    occs.rem <- c2_removeByID(occs(), 
-                              input$removeID, 
+    occs.rem <- c2_removeByID(occs(),
+                              input$removeID,
                               shinyLogs)
     req(occs.rem)
-    
+
     # LOAD INTO SPP ####
     spp[[curSp()]]$occs <- occs.rem
-    
+
     # METADATA ####
     # if no removeIDs are recorded yet, make a list to record them
     # if at least one exists, add to the list
@@ -25,7 +25,7 @@ removeByID_MOD <- function(input, output, session) {
     } else {
       spp[[curSp()]]$rmm$code$wallaceSettings$removedIDs <- c(rmm()$code$wallaceSettings$removedIDs, input$removeID)
     }
-    
+
     return(occs.rem)
   })
 }
@@ -33,12 +33,10 @@ removeByID_MOD <- function(input, output, session) {
 removeByID_MAP <- function(map, session) {
   map %>% leaflet.extras::removeDrawToolbar() %>%
     clearAll() %>%
-    addCircleMarkers(data = occs(), lat = ~latitude, lng = ~longitude, 
-                     radius = 5, color = 'red', fill = TRUE, fillColor = "red", 
+    addCircleMarkers(data = occs(), lat = ~latitude, lng = ~longitude,
+                     radius = 5, color = 'red', fill = TRUE, fillColor = "red",
                      fillOpacity = 0.2, weight = 2, popup = ~pop) %>%
     zoom2Occs(occs())
-  print("remoccs")
-    
 }
 
 removeByID_INFO <- infoGenerator(modName = "Remove Occurrences By ID",
