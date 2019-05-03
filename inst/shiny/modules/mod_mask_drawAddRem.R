@@ -9,6 +9,7 @@ drawAddRem_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
     # GEPB: Polygon outside boundaries
+<<<<<<< HEAD
     # GEPB: Add thresholded map error spp[[curSp()]]$postProc$prediction
     if (is.null(spp[[curSp()]]$postProc$prediction)) {
       shinyLogs %>% writeLog(
@@ -17,6 +18,9 @@ drawAddRem_MOD <- function(input, output, session) {
       )
       return()
     }
+=======
+    # GEPB: Add thresholded map error
+>>>>>>> 033dc3cbf7e578cc841e00731ff6776e3c20d75d
     if (is.null(spp[[curSp()]]$polyMaskXY)) {
       shinyLogs %>% writeLog(
         type = 'error',
@@ -38,6 +42,7 @@ drawAddRem_MOD <- function(input, output, session) {
 
 drawAddRem_MAP <- function(map, session) {
   updateTabsetPanel(session, 'main', selected = 'Map')
+  # map %>% clearAll()
   map %>% leaflet.extras::addDrawToolbar(
     targetGroup = 'draw',
     polylineOptions = FALSE,
