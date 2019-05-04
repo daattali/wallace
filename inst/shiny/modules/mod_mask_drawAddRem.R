@@ -9,7 +9,6 @@ drawAddRem_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
     # GEPB: Polygon outside boundaries
-<<<<<<< HEAD
     # GEPB: Add thresholded map error spp[[curSp()]]$postProc$prediction
     if (is.null(spp[[curSp()]]$postProc$prediction)) {
       shinyLogs %>% writeLog(
@@ -18,9 +17,6 @@ drawAddRem_MOD <- function(input, output, session) {
       )
       return()
     }
-=======
-    # GEPB: Add thresholded map error
->>>>>>> 033dc3cbf7e578cc841e00731ff6776e3c20d75d
     if (is.null(spp[[curSp()]]$polyMaskXY)) {
       shinyLogs %>% writeLog(
         type = 'error',
@@ -34,7 +30,10 @@ drawAddRem_MOD <- function(input, output, session) {
                                   shinyLogs)
 
     # LOAD INTO SPP ####
-    spp[[curSp()]]$mask$polyAddRem <- drawAddRem
+    if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
+      spp[[curSp()]]$mask$polyAddRem <- list()
+    }
+    spp[[curSp()]]$mask$polyAddRem <- c(spp[[curSp()]]$mask$polyAddRem, drawAddRem)
 
     # GEPB: ADD METADATA ####
   })
@@ -54,10 +53,17 @@ drawAddRem_MAP <- function(map, session) {
   )
 
   req(spp[[curSp()]]$mask$polyAddRem)
-  polyMaskXY <- spp[[curSp()]]$polyMaskXY
-  map %>% clearAll() %>%
-    addPolygons(lng = polyMaskXY[,1], lat = polyMaskXY[,2],
-                weight = 4, color = "gray", group = 'maskShp') %>%
+  # polyMaskXY <- spp[[curSp()]]$polyMaskXY
+  polyAddRem <- spp[[curSp()]]$mask$polyAddRem
+
+  map %>% clearMarkers() %>%
+    clearShapes() %>%
     # add background polygon
     mapBgPolys(bgShpXY())
+  for(i in 1:length(polyAddRem)) {
+    xy <- ggplot2::fortify(polyAddRem[[i]])
+    map %>%
+      addPolygons(lng = xy[,1], lat = xy[,2],
+                  weight = 4, color = "gray", group = 'maskShp')
+  }
 }
