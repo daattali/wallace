@@ -9,7 +9,6 @@ drawAddRem_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
     # GEPB: Polygon outside boundaries
-    # GEPB: Add thresholded map error spp[[curSp()]]$postProc$prediction
     if (is.null(spp[[curSp()]]$postProc$prediction)) {
       shinyLogs %>% writeLog(
         type = 'error',
@@ -62,8 +61,14 @@ drawAddRem_MAP <- function(map, session) {
     mapBgPolys(bgShpXY())
   for(i in 1:length(polyAddRem)) {
     xy <- ggplot2::fortify(polyAddRem[[i]])
-    map %>%
-      addPolygons(lng = xy[,1], lat = xy[,2],
-                  weight = 4, color = "gray", group = 'maskShp')
+    if (i == 1) {
+      map %>%
+        addPolygons(lng = xy[,1], lat = xy[,2],
+                    weight = 4, color = "gray", group = 'maskShp')
+    } else {
+      map %>% clearGroup('maskShp') %>%
+        addPolygons(lng = xy[,1], lat = xy[,2],
+                    weight = 4, color = "gray", group = 'maskShp')
+    }
   }
 }
