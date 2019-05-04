@@ -555,13 +555,6 @@ tagList(
                              "Olinguito(**)" = 'olinMask'),
               selected = 'addRemMask'),
             HTML('<hr>'),
-            # conditionalPanel(
-            #   "input.maskSel == 'olinMask'",
-            #   uiTop(olinguito_INFO),
-            #   olinguito_UI('mask_olinguito_uiID'),
-            #   actionButton("goOlinguito", "Run (**)"),
-            #   HTML('<hr>')
-            # ),
             conditionalPanel(
               "input.maskSel == 'addRemMask'",
               radioButtons(
@@ -570,8 +563,6 @@ tagList(
                                "user" = 'maskUserAddRem'),
                 inline = TRUE
               ),
-              # drawAddRem_UI('mask_drawAddRem_uiID'),
-              # actionButton("goDrawAddRem", "Select"),
               conditionalPanel(
                 "input.addRemSel == 'maskDrawAddRem'",
                 drawAddRem_UI('mask_drawAddRem_uiID'),
@@ -582,9 +573,11 @@ tagList(
                 userAddRem_UI('mask_userAddRem_uiID'),
                 actionButton("goUserAddRem", "Select")
               ),
-              actionButton("goAddRemo", "Action (**)"),
+              br(),
+              doAddRem_UI('mask_doAddRem_uiID'),
+              actionButton("goDoAddRem", "Action (**)"),
               HTML('<hr>')
-            )#,
+            )
             # conditionalPanel(
             #   "input.maskSel == 'olinMask'",
             #   uiBottom(olinguito_INFO)
