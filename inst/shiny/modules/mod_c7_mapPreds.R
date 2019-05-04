@@ -142,7 +142,7 @@ mapPreds_MOD <- function(input, output, session) {
     spp[[curSp()]]$rmm$output$prediction$thresholdRule <- input$threshold
     if(input$threshold != 'none') {
       spp[[curSp()]]$rmm$output$prediction$thresholdSet <- thr.sel
-      spp[[curSp()]]$postProc$prediction <- getRasterVals(predSel.thr, predType)
+      spp[[curSp()]]$postProc$prediction <- predSel.thr
     } else {
       spp[[curSp()]]$rmm$output$prediction$thresholdSet <- NULL
       spp[[curSp()]]$postProc$prediction <- NULL

@@ -162,7 +162,8 @@ function(input, output, session) {
                 "projArea" = projectArea_MAP,
                 "projTime" = projectTime_MAP,
                 "mess" = envSimilarity_MAP,
-                "maskDrawAddRem" = drawAddRem_MAP)
+                "maskDrawAddRem" = drawAddRem_MAP,
+                "maskDoAddRem" = doAddRem_MAP)
     req(f)
     map %>% f(session)
   })
@@ -1296,16 +1297,16 @@ function(input, output, session) {
   # sub-module draw polygon add/remove on Map ####
   # # # # # # # # # # # # # # # # # # # # #
   observeEvent(input$goDrawAddRem, {
-    #req(input$map_draw_new_feature)
     drawAddRem <- callModule(drawAddRem_MOD, 'mask_drawAddRem_uiID')
     drawAddRem()
-    # MAPPING
-    # map %>%
-      # reset draw polygon
-      # leaflet.extras::removeDrawToolbar(clearFeatures = TRUE) %>%
-      # leaflet.extras::addDrawToolbar(targetGroup = 'draw', polylineOptions = FALSE,
-                                     # rectangleOptions = FALSE, circleOptions = FALSE,
-                                     # markerOptions = FALSE, circleMarkerOptions = FALSE)
+  })
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # sub-module draw polygon add/remove on Map ####
+  # # # # # # # # # # # # # # # # # # # # #
+  observeEvent(input$goDoAddRem, {
+    doAddRem <- callModule(doAddRem_MOD, 'mask_doAddRem_uiID')
+    doAddRem()
   })
 
   ########################################### #
