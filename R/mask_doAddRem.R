@@ -5,6 +5,9 @@
 #' @details
 #' See Examples.
 #'
+#' @param polyAddRem x
+#' @param prediction x
+#' @param rem x
 #' @param shinyLogs x
 # @keywords
 #'
@@ -24,6 +27,19 @@
 #' @export
 #'
 
-mask_doAddRem <- function(shinyLogs = NULL) {
-
+mask_doAddRem <- function(polyAddRem, prediction, rem = FALSE,
+                          shinyLogs = NULL) {
+  ## Add shiny logs
+  if (rem == FALSE) {
+    addRaster <- raster::rasterize(polyAddRem, prediction, 1)
+    addRaster[is.na(addRaster)] <- 0
+    newPred <- prediction + addRaster
+    newPred[newPred > 1] <- 1
+    return(newPred)
+  } else {
+    remRaster <- raster::rasterize(polyAddRem, prediction, 1)
+    remaster[is.na(remRaster)] <- 0
+    newPred <- prediction - remRaster
+    return(newPred)
+  }
 }
