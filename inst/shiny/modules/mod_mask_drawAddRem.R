@@ -51,7 +51,7 @@ drawAddRem_MAP <- function(map, session) {
     editOptions = leaflet.extras::editToolbarOptions()
   )
 
-  req(spp[[curSp()]]$mask$polyAddRem)
+  req(spp[[curSp()]]$mask$polyAddRem, spp[[curSp()]]$postProc$prediction)
   # polyMaskXY <- spp[[curSp()]]$polyMaskXY
   polyAddRem <- spp[[curSp()]]$mask$polyAddRem
 
@@ -59,16 +59,27 @@ drawAddRem_MAP <- function(map, session) {
     clearShapes() %>%
     # add background polygon
     mapBgPolys(bgShpXY())
+    #removeImage(layerId = 'mapPred') # %>%
+
   for(i in 1:length(polyAddRem)) {
     xy <- ggplot2::fortify(polyAddRem[[i]])
     if (i == 1) {
       map %>%
         addPolygons(lng = xy[,1], lat = xy[,2],
-                    weight = 4, color = "gray", group = 'maskShp')
+                    weight = 4, color = "gray", group = 'maskShp') %>%
+        removeImage(layerId = 'mapPred') %>%
+        addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
+                       opacity = 0.7, group = 'mask', layerId = 'postPred',
+                       method = "ngb")
     } else {
       map %>% clearGroup('maskShp') %>%
         addPolygons(lng = xy[,1], lat = xy[,2],
-                    weight = 4, color = "gray", group = 'maskShp')
+                    weight = 4, color = "gray", group = 'maskShp') %>%
+        removeImage(layerId = 'postPred') %>%
+        addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
+                       opacity = 0.7, group = 'mask', layerId = 'postPred',
+                       method = "ngb")
+
     }
   }
 }
