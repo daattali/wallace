@@ -38,8 +38,9 @@ mask_doAddRem <- function(polyAddRem, prediction, rem = FALSE,
     return(newPred)
   } else {
     remRaster <- raster::rasterize(polyAddRem, prediction, 1)
-    remaster[is.na(remRaster)] <- 0
+    remRaster[is.na(remRaster)] <- 0
     newPred <- prediction - remRaster
+    newPred[newPred < 0] <- 0
     return(newPred)
   }
 }
