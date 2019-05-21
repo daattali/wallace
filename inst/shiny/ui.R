@@ -15,7 +15,7 @@ tagList(
     tabPanel("Visualize", value='vis'),
     tabPanel("Project", value='proj'),
     # tabPanel("Post-Data(**)", value = 'ppdat'),
-    tabPanel("maskRR(**)", value = 'mask'),
+    tabPanel("Post-processing", value = 'mask'),
     tabPanel("Session Code", value='rmd'),
 
     fluidRow(
@@ -194,7 +194,7 @@ tagList(
               "procEnvsSel", "Modules Available:",
               choices = list("Select Study Region" = "bgSel",
                              "User-specified" = "bgUser",
-                             "Draw polygon(**)" = "bgDraw")
+                             "Draw a polygon" = "bgDraw")
             ),
             tags$hr(),
             conditionalPanel(
@@ -214,9 +214,9 @@ tagList(
             conditionalPanel(
               "input.procEnvsSel == 'bgDraw'",
               uiTop(drawBgExtent_INFO),
-              div("Step 1:", id="step"), div("Draw Background Extent(**)", id="stepText"), br(), br(),
+              div("Step 1:", id="step"), div("Draw Background Extent", id="stepText"), br(), br(),
               drawBgExtent_UI('c4_drawBgExtent'),
-              actionButton("goDrawBg", "Create(**)")
+              actionButton("goDrawBg", "Select")
             ),
             conditionalPanel(
               "input.procEnvsSel == 'bgSel' | input.procEnvsSel == 'bgUser' | input.procEnvsSel == 'bgDraw'",
@@ -512,7 +512,7 @@ tagList(
               uiBottom(envSimilarity_INFO)
             )
           ),
-          # POST PROCESING DATA (**) ####
+          # POST PROCESSING DATA ####
           conditionalPanel(
             "input.tabs == 'ppdat'",
             h4("Post-processing data (**)"),
@@ -548,11 +548,11 @@ tagList(
           # POST PROCESING MASKRANGER ####
           conditionalPanel(
             "input.tabs == 'mask'",
-            h4("Post-processing(**)"),
+            h4("Post-processing"),
             radioButtons(
               "maskSel", "Modules Available:",
-              choices = list("Add/Remove area (**)" = 'addRemMask',
-                             "Olinguito(**)" = 'olinMask'),
+              choices = list("Expert Driven: Editing using expert maps" = 'addRemMask',
+                             "Data Driven: Masking by land cover" = 'olinMask'),
               selected = 'addRemMask'),
             HTML('<hr>'),
             conditionalPanel(
@@ -575,7 +575,7 @@ tagList(
               ),
               br(),
               doAddRem_UI('mask_doAddRem_uiID'),
-              actionButton("goDoAddRem", "Action (**)"),
+              actionButton("goDoAddRem", "Apply expert knowledge"),
               HTML('<hr>')
             )
             # conditionalPanel(

@@ -4,9 +4,9 @@ responsePlot_UI <- function(id) {
   tagList(
     #'Select an individual environmental variable, or "ALL" for all of them, to see the response curves.'
     uiOutput("curEnvUI"),
-    h6("Reponse curves are displayed automatically in 'Results' tab(**)")
+    h6("Reponse curves are displayed automatically in 'Results' tab")
   )
-  
+
 }
 
 responsePlot_MOD <- function(input, output, session) {
@@ -23,12 +23,12 @@ responsePlot_MOD <- function(input, output, session) {
     } else if (spp[[curSp()]]$rmm$model$algorithm == "maxent.jar") {
       dismo::response(evalOut()@models[[curModel()]], var = curEnv())
     }
-    
+
   })
 }
 
-responsePlot_INFO <- infoGenerator(modName = "Response Curves", 
-                                   modAuts = "Jamie M. Kass, Robert Muscarella, 
-                                   Bruno Vilela, Gonzalo E. Pinilla-Buitrago, 
-                                   Robert P. Anderson", 
+responsePlot_INFO <- infoGenerator(modName = "Response Curves",
+                                   modAuts = "Jamie M. Kass, Robert Muscarella,
+                                   Bruno Vilela, Gonzalo E. Pinilla-Buitrago,
+                                   Robert P. Anderson",
                                    pkgName = c("dismo", "maxnet"))

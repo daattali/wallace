@@ -1,9 +1,9 @@
 doAddRem_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    radioButtons(ns("doAddRem"), "Choose what to do (**)",
-                 choices = list("Add polygon (**)" = 'addMask',
-                                "Remove polygon (**)" = 'remMAsk'), inline = TRUE)
+    radioButtons(ns("doAddRem"), "Choose action",
+                 choices = list("Add polygon" = 'addMask',
+                                "Remove polygon" = 'remMAsk'), inline = TRUE)
   )
 }
 

@@ -12,7 +12,7 @@ drawAddRem_MOD <- function(input, output, session) {
     if (is.null(spp[[curSp()]]$postProc$prediction)) {
       shinyLogs %>% writeLog(
         type = 'error',
-        "SDM predicion need to be thresholded. Please use a threshold in Visualize component. (**)"
+        "SDM predicion need to be thresholded. Please provide a threshold in the Visualize component."
       )
       return()
     }

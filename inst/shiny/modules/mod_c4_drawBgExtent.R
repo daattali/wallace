@@ -1,7 +1,7 @@
 drawBgExtent_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    "Draw a polygon and select buffer distance(**)", br(), br(),
+    "Draw a polygon representing the study region then select buffer distance", br(), br(),
     tags$div(
       title = 'Buffer area in degrees (1 degree = ~111 km). Exact length varies based on latitudinal position.',
       numericInput(ns("drawBgBuf"), label = "Study region buffer distance (degree)",
@@ -84,6 +84,6 @@ drawBgExtent_MAP <- function(map, session) {
   }
 }
 
-drawBgExtent_INFO <- infoGenerator(modName = "Draw-specified Study Region(**)",
+drawBgExtent_INFO <- infoGenerator(modName = "Draw Study Region",
                                    modAuts = "Gonzalo E. Pinilla-Buitrago, Jamie M. Kass, Bruno Vilela, Robert P. Anderson (**)",
                                    pkgName = NULL)

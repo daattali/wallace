@@ -44,4 +44,8 @@ output: html_document
 - Project to New Time  
 - Calculate Environmental Similarity  
 
+**9:** *Post-Processing*
+- Expert Driven: Editing using expert maps
+- Data Driven: Masking by land cover
+
 **Download Session Code**  

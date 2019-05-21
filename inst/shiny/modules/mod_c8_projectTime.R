@@ -1,7 +1,7 @@
 projectTime_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    # aliases are different for ecoclimate temporal scenarios. e.g. 
+    # aliases are different for ecoclimate temporal scenarios. e.g.
     # "lgm" is "LGM"
     # "mid" is "Holo"
     # "2.6" is "Future 2.6"
@@ -19,19 +19,19 @@ projectTime_UI <- function(id) {
                                '4.5' = 45,
                                '6.0' = 60,
                                '8.5' = 85)),
-    tags$div(title='Create binary map of predicted presence/absence assuming all values above threshold value represent presence. 
+    tags$div(title='Create binary map of predicted presence/absence assuming all values above threshold value represent presence.
              Also can be interpreted as a "potential distribution" (see guidance).',
              selectInput(ns('threshold'), label = "Set threshold",
                          choices = list("No threshold" = 'none',
-                                        "Minimum Training Presence" = 'mtp', 
+                                        "Minimum Training Presence" = 'mtp',
                                         "10 Percentile Training Presence" = 'p10',
                                         "Quantile of Training Presences" = 'qtp'))),
     conditionalPanel(sprintf("input['%s'] == 'qtp'", ns("threshold")),
                      sliderInput(ns("trainPresQuantile"), "Set quantile",
                                  min = 0, max = 1, value = .05)),
-    conditionalPanel(condition = sprintf("input.modelSel == 'Maxent' & input['%s'] == 'none'", 
+    conditionalPanel(condition = sprintf("input.modelSel == 'Maxent' & input['%s'] == 'none'",
                                          ns("threshold")),
-                     h5("Prediction output is the same than Visualize component (**)"))
+                     h5("Prediction output is the same as in the Visualize component"))
   )
 }
 
@@ -44,7 +44,7 @@ projectTime_MOD <- function(input, output, session) {
   # dynamic ui for GCM selection: choices differ depending on choice of time period
   output$selGCMui <- renderUI({
     ns <- session$ns
-    
+
     if (input$selTime == 'lgm') {
       gcms <- c('CC', 'MR', 'MC')
     } else if (input$selTime == 'mid') {
@@ -57,21 +57,21 @@ projectTime_MOD <- function(input, output, session) {
     gcms <- as.list(c("Select GCM" = "", gcms))
     selectInput(ns("selGCM"), label = "Select global circulation model", choices = gcms)
   })
-  
+
   reactive({
     # ERRORS ####
     if (is.null(spp[[curSp()]]$visualization$mapPred)) {
-      shinyLogs %>% writeLog(type = 'error', 'Calculate a model prediction in component 7 
+      shinyLogs %>% writeLog(type = 'error', 'Calculate a model prediction in component 7
                              before projecting.')
       return()
     }
     if (is.null(spp[[curSp()]]$polyPjXY)) {
-      shinyLogs %>% writeLog(type = 'error', "The polygon has not been drawn and finished. 
+      shinyLogs %>% writeLog(type = 'error', "The polygon has not been drawn and finished.
                              Please use the draw toolbar on the left-hand of the map to complete
                              the polygon.")
       return()
     }
-    
+
     if(is.null(spp[[curSp()]]$polyPjXY)) {
       shinyLogs %>% writeLog(type = 'error', 'Select projection extent first.')
       return()
@@ -81,10 +81,10 @@ projectTime_MOD <- function(input, output, session) {
       shinyLogs %>% writeLog(type = 'error', 'Project to New Time currently only available with resolutions >30 arc seconds.')
       return()
     }
-    
-    # code taken from dismo getData() function to catch if user is trying to 
+
+    # code taken from dismo getData() function to catch if user is trying to
     # download a missing combo of gcm / rcp
-    gcms <- c('AC', 'BC', 'CC', 'CE', 'CN', 'GF', 'GD', 'GS', 'HD', 'HG', 'HE', 
+    gcms <- c('AC', 'BC', 'CC', 'CE', 'CN', 'GF', 'GD', 'GS', 'HD', 'HG', 'HE',
               'IN', 'IP', 'MI', 'MR', 'MC', 'MP', 'MG', 'NO')
     rcps <- c(26, 45, 60, 85)
     m <- matrix(c(0,1,1,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -92,11 +92,11 @@ projectTime_MOD <- function(input, output, session) {
                   0,1,1,1,1,1,1,1,1,1,1,1,1,1), ncol=4)
     i <- m[which(input$selGCM == gcms), which(input$selRCP == rcps)]
     if (!i) {
-      shinyLogs %>% writeLog(type = 'error', 'This combination of GCM and RCP is not 
+      shinyLogs %>% writeLog(type = 'error', 'This combination of GCM and RCP is not
                        available. Please make a different selection.')
       return()
     }
-    
+
     # DATA ####
     smartProgress(shinyLogs, message = paste("Retrieving WorldClim data for", input$selTime, input$selRCP, "..."), {
       projTimeEnvs <- raster::getData('CMIP5', var = "bio", res = envsRes * 60,
@@ -105,22 +105,22 @@ projectTime_MOD <- function(input, output, session) {
       # in case user subsetted bioclims
       projTimeEnvs <- projTimeEnvs[[names(envs())]]
     })
-    
-    # FUNCTION CALL ####    
+
+    # FUNCTION CALL ####
     predType <- rmm()$output$prediction$notes
-    projTime.out <- c8_projectTime(evalOut(), curModel(), projTimeEnvs, predType, 
-                                   alg = rmm()$model$algorithm, 
+    projTime.out <- c8_projectTime(evalOut(), curModel(), projTimeEnvs, predType,
+                                   alg = rmm()$model$algorithm,
                                    clamp = rmm()$model$maxent$clamping,
                                    spp[[curSp()]]$polyPjXY,
                                    spp[[curSp()]]$polyPjID, shinyLogs)
     projExt <- projTime.out$projExt
     projTime <- projTime.out$projTime
-    
+
     # PROCESSING ####
-    # generate binary prediction based on selected thresholding rule 
+    # generate binary prediction based on selected thresholding rule
     # (same for all Maxent prediction types because they scale the same)
     occPredVals <- spp[[curSp()]]$visualization$occPredVals
-    
+
     if(!(input$threshold == 'none')) {
       # use threshold from present-day model training area
       if (input$threshold == 'mtp') {
@@ -131,28 +131,28 @@ projectTime_MOD <- function(input, output, session) {
         thr <- quantile(occPredVals, probs = input$trainPresQuantile)
       }
       projTimeThr <- projTime > thr
-      shinyLogs %>% writeLog("Projection of model to ", 
-                             paste0('20', input$selTime), " for ", 
-                             em(spName(occs())), ' with threshold ', input$threshold, ' (', 
-                             formatC(thr, format = "e", 2), ") for GCM ", GCMlookup[input$selGCM], 
+      shinyLogs %>% writeLog("Projection of model to ",
+                             paste0('20', input$selTime), " for ",
+                             em(spName(occs())), ' with threshold ', input$threshold, ' (',
+                             formatC(thr, format = "e", 2), ") for GCM ", GCMlookup[input$selGCM],
                              " under RCP ", as.numeric(input$selRCP)/10.0, ".")
     } else {
       projTimeThr <- projTime
-      shinyLogs %>% writeLog("Projection of model to ", 
-                             paste0('20', input$selTime), " for ", 
+      shinyLogs %>% writeLog("Projection of model to ",
+                             paste0('20', input$selTime), " for ",
                              em(spName(occs())), ' with ', predType, " output for GCM ",
-                             GCMlookup[input$selGCM], 
+                             GCMlookup[input$selGCM],
                              " under RCP ", as.numeric(input$selRCP)/10.0, ".")
     }
     raster::crs(projTimeThr) <- raster::crs(envs())
     # rename
     names(projTimeThr) <- paste0(curModel(), '_thresh_', predType)
-    
+
     # LOAD INTO SPP ####
     spp[[curSp()]]$project$pjEnvs <- projExt
     spp[[curSp()]]$project$mapProj <- projTimeThr
     spp[[curSp()]]$project$mapProjVals <- getRasterVals(projTimeThr, predType)
-    
+
     # METADATA ####
     projYr <- paste0('20', input$selTime)
     spp[[curSp()]]$rmm$data$transfer$environment1$minVal <- printVecAsis(raster::cellStats(projExt, min), asChar = TRUE)
@@ -163,10 +163,10 @@ projectTime_MOD <- function(input, output, session) {
     spp[[curSp()]]$rmm$data$transfer$environment1$extentSet <- printVecAsis(as.vector(projExt@extent), asChar = TRUE)
     spp[[curSp()]]$rmm$data$transfer$environment1$extentRule <- "project to user-selected new time"
     spp[[curSp()]]$rmm$data$transfer$environment1$sources <- "WorldClim 1.4"
-    spp[[curSp()]]$rmm$data$transfer$environment1$notes <- paste("projection to year", projYr, "for GCM", 
-                                  GCMlookup[input$selGCM], "under RCP", 
+    spp[[curSp()]]$rmm$data$transfer$environment1$notes <- paste("projection to year", projYr, "for GCM",
+                                  GCMlookup[input$selGCM], "under RCP",
                                   as.numeric(input$selRCP)/10.0)
-    
+
     spp[[curSp()]]$rmm$output$transfer$environment1$units <- ifelse(predType == "raw", "relative occurrence rate", predType)
     spp[[curSp()]]$rmm$output$transfer$environment1$minVal <- printVecAsis(raster::cellStats(projTimeThr, min), asChar = TRUE)
     spp[[curSp()]]$rmm$output$transfer$environment1$maxVal <- printVecAsis(raster::cellStats(projTimeThr, max), asChar = TRUE)
@@ -204,30 +204,30 @@ projectTime_MAP <- function(map, session) {
     map %>% removeControl("proj") %>%
       addLegend("bottomright", pal = legendPal, title = "Predicted Suitability<br>(Projected)",
                 values = mapProjVals, layerId = 'proj', labFormat = reverseLabels(2, reverse_order=TRUE))
-    
+
   }
   # map model prediction raster and projection polygon
   sharedExt <- rbind(polyPjXY, occs()[c("longitude", "latitude")])
-  map %>% 
+  map %>%
     clearMarkers() %>% clearShapes() %>% removeImage('projRas') %>%
     map_occs(occs(), customZoom = sharedExt) %>%
     addRasterImage(mapProj(), colors = rasPal, opacity = 0.7,
                    layerId = 'projRas', group = 'proj', method = "ngb") %>%
-    addPolygons(lng = polyPjXY[,1], lat = polyPjXY[,2], layerId = "projExt", 
+    addPolygons(lng = polyPjXY[,1], lat = polyPjXY[,2], layerId = "projExt",
                 fill = FALSE, weight = 4, color = "red", group = 'proj') %>%
     # add background polygon
     mapBgPolys(bgShpXY())
-  
+
   # create new spatial polygon from coordinates
-  newPoly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(polyPjXY)), 
+  newPoly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(polyPjXY)),
                                                    ID = spp[[curSp()]]$polyPjID)))
   if (rgeos::gIntersects(newPoly, bgExt())) {
-    map %>% 
-      removeImage('mapPred') %>% 
+    map %>%
+      removeImage('mapPred') %>%
       removeControl('train')
     }
 }
 
-projectTime_INFO <- infoGenerator(modName = "Project to New Time", 
-                                  modAuts = "Jamie M. Kass, Bruno Vilela, Gonzalo Pinilla, Robert P. Anderson", 
+projectTime_INFO <- infoGenerator(modName = "Project to New Time",
+                                  modAuts = "Jamie M. Kass, Bruno Vilela, Gonzalo Pinilla, Robert P. Anderson",
                                   pkgName = "dismo")
