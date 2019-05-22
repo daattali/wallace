@@ -40,6 +40,7 @@ drawAddRem_MOD <- function(input, output, session) {
       )
       return()
     } else {
+      shinyLogs %>% writeLog("The polygon is ready for action (add or remove) (**)")
       # LOAD INTO SPP ####
       if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
         spp[[curSp()]]$mask$polyAddRem <- list()

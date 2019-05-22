@@ -18,6 +18,11 @@ doAddRem_MOD <- function(input, output, session) {
                               spp[[curSp()]]$postProc$prediction,
                               remBol,
                               shinyLogs)
+    if (remBol == FALSE) {
+      shinyLogs %>% writeLog("The polygon was added (**)")
+    } else {
+      shinyLogs %>% writeLog("The polygon was removed (**)")
+    }
     # LOAD INTO SPP ####
     spp[[curSp()]]$postProc$prediction <- doAddRem
 
