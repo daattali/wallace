@@ -80,6 +80,11 @@ AddRem_MAP <- function(map, session) {
         addPolygons(lng = xy[,1], lat = xy[,2],
                     weight = 4, color = "gray", group = 'maskShp') %>%
         removeImage(layerId = 'mapPred') %>%
+        removeControl(layerId = 'train') %>%
+        addLegend("bottomright", colors = c('gray', 'purple'),
+                  title = "Expert Suitability (**)",
+                  labels = c("Absence (**)", "Presence (**)"),
+                  opacity = 1, layerId = 'expert') %>%
         addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
                        opacity = 0.7, group = 'mask', layerId = 'postPred',
                        method = "ngb")
