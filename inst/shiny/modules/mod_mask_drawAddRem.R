@@ -43,10 +43,9 @@ drawAddRem_MOD <- function(input, output, session) {
   })
 }
 
-# include draw and do visualization on map
+# This include draw and do visualization on map
 AddRem_MAP <- function(map, session) {
   updateTabsetPanel(session, 'main', selected = 'Map')
-  # map %>% clearAll()
   map %>% leaflet.extras::addDrawToolbar(
     targetGroup = 'draw',
     polylineOptions = FALSE,
@@ -58,14 +57,12 @@ AddRem_MAP <- function(map, session) {
   )
 
   req(spp[[curSp()]]$mask$polyAddRem, spp[[curSp()]]$postProc$prediction)
-  # polyMaskXY <- spp[[curSp()]]$polyMaskXY
   polyAddRem <- spp[[curSp()]]$mask$polyAddRem
 
   map %>% clearMarkers() %>%
     clearShapes() %>%
     # add background polygon
     mapBgPolys(bgShpXY())
-    #removeImage(layerId = 'mapPred') # %>%
 
   for(i in 1:length(polyAddRem)) {
     xy <- ggplot2::fortify(polyAddRem[[i]])
@@ -89,3 +86,8 @@ AddRem_MAP <- function(map, session) {
     }
   }
 }
+
+addRem_INFO <- infoGenerator(modName = "Editing using expert maps (**)",
+                             modAuts = "Gonzalo E. Pinilla-Buitrago, Peter Galante",
+                             # GEPB: Change name when a new version is released.
+                             pkgName = "maskedRangeR")

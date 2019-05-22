@@ -4,9 +4,15 @@
 \alias{mask_doAddRem}
 \title{mask_doAddRem}
 \usage{
-mask_doAddRem(shinyLogs = NULL)
+mask_doAddRem(polyAddRem, prediction, rem = FALSE, shinyLogs = NULL)
 }
 \arguments{
+\item{polyAddRem}{x}
+
+\item{prediction}{x}
+
+\item{rem}{x}
+
 \item{shinyLogs}{x}
 }
 \description{

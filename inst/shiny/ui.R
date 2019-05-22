@@ -557,37 +557,15 @@ tagList(
             HTML('<hr>'),
             conditionalPanel(
               "input.maskSel == 'addRemMask'",
+              uiTop(addRem_INFO),
               drawAddRem_UI('mask_drawAddRem_uiID'),
               actionButton("goDrawAddRem", "Select"),
-              # radioButtons(
-              #   "addRemSel", label = "Select input",
-              #   choices = list("draw" = 'maskDrawAddRem',
-              #                  "user" = 'maskUserAddRem'),
-              #   inline = TRUE
-              # ),
-              # conditionalPanel(
-              #   "input.addRemSel == 'maskDrawAddRem'",
-              #   drawAddRem_UI('mask_drawAddRem_uiID'),
-              #   actionButton("goDrawAddRem", "Select")
-              # ),
-              # conditionalPanel(
-              #   "input.addRemSel == 'maskUserAddRem'",
-              #   userAddRem_UI('mask_userAddRem_uiID'),
-              #   actionButton("goUserAddRem", "Select")
-              # ),
               br(),
               doAddRem_UI('mask_doAddRem_uiID'),
               actionButton("goDoAddRem", "Apply expert knowledge"),
-              HTML('<hr>')
+              HTML('<hr>'),
+              uiBottom(addRem_INFO)
             )
-            # conditionalPanel(
-            #   "input.maskSel == 'olinMask'",
-            #   uiBottom(olinguito_INFO)
-            # ),
-            # conditionalPanel(
-            #   "input.maskSel == 'addRemMask'",
-            #   uiBottom(addRem_INFO)
-            # )
           ),
           # SESSION CODE ####
           conditionalPanel(
