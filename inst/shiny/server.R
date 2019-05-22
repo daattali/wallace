@@ -81,9 +81,7 @@ function(input, output, session) {
     else if(component() == "model") input$modelSel
     else if(component() == "vis") input$visSel
     else if(component() == "proj") input$projSel
-    else if(component() == "mask") {
-      if (input$maskSel == 'addRemMask') input$addRemSel
-    }
+    else if(component() == "mask") input$maskSel
     #else if(component() == "rmd") ''
   })
 
@@ -162,8 +160,7 @@ function(input, output, session) {
                 "projArea" = projectArea_MAP,
                 "projTime" = projectTime_MAP,
                 "mess" = envSimilarity_MAP,
-                "maskDrawAddRem" = drawAddRem_MAP,
-                "maskDoAddRem" = doAddRem_MAP)
+                "addRemMask" = AddRem_MAP)
     req(f)
     map %>% f(session)
   })

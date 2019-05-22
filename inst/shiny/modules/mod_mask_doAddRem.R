@@ -20,13 +20,8 @@ doAddRem_MOD <- function(input, output, session) {
                               shinyLogs)
     # LOAD INTO SPP ####
     spp[[curSp()]]$postProc$prediction <- doAddRem
-    print("Testing function")
 
     # GEPB: Add metadata ####
 
   })
-}
-
-doAddRem_MAP <- function(map, session) {
-
 }

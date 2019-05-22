@@ -557,22 +557,24 @@ tagList(
             HTML('<hr>'),
             conditionalPanel(
               "input.maskSel == 'addRemMask'",
-              radioButtons(
-                "addRemSel", label = "Select input",
-                choices = list("draw" = 'maskDrawAddRem',
-                               "user" = 'maskUserAddRem'),
-                inline = TRUE
-              ),
-              conditionalPanel(
-                "input.addRemSel == 'maskDrawAddRem'",
-                drawAddRem_UI('mask_drawAddRem_uiID'),
-                actionButton("goDrawAddRem", "Select")
-              ),
-              conditionalPanel(
-                "input.addRemSel == 'maskUserAddRem'",
-                userAddRem_UI('mask_userAddRem_uiID'),
-                actionButton("goUserAddRem", "Select")
-              ),
+              drawAddRem_UI('mask_drawAddRem_uiID'),
+              actionButton("goDrawAddRem", "Select"),
+              # radioButtons(
+              #   "addRemSel", label = "Select input",
+              #   choices = list("draw" = 'maskDrawAddRem',
+              #                  "user" = 'maskUserAddRem'),
+              #   inline = TRUE
+              # ),
+              # conditionalPanel(
+              #   "input.addRemSel == 'maskDrawAddRem'",
+              #   drawAddRem_UI('mask_drawAddRem_uiID'),
+              #   actionButton("goDrawAddRem", "Select")
+              # ),
+              # conditionalPanel(
+              #   "input.addRemSel == 'maskUserAddRem'",
+              #   userAddRem_UI('mask_userAddRem_uiID'),
+              #   actionButton("goUserAddRem", "Select")
+              # ),
               br(),
               doAddRem_UI('mask_doAddRem_uiID'),
               actionButton("goDoAddRem", "Apply expert knowledge"),

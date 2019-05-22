@@ -1,7 +1,12 @@
 drawAddRem_UI <- function(id) {
   ns <- NS(id)
   tagList(
-
+    radioButtons(
+      "addRemSel", label = "Select input",
+      choices = list("draw" = 'maskDrawAddRem',
+                     "user" = 'maskUserAddRem'),
+      inline = TRUE
+    )
   )
 }
 
@@ -38,7 +43,8 @@ drawAddRem_MOD <- function(input, output, session) {
   })
 }
 
-drawAddRem_MAP <- function(map, session) {
+# include draw and do visualization on map
+AddRem_MAP <- function(map, session) {
   updateTabsetPanel(session, 'main', selected = 'Map')
   # map %>% clearAll()
   map %>% leaflet.extras::addDrawToolbar(
