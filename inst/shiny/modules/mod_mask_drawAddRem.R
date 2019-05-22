@@ -33,13 +33,21 @@ drawAddRem_MOD <- function(input, output, session) {
                                   spp[[curSp()]]$polyMaskID,
                                   shinyLogs)
 
-    # LOAD INTO SPP ####
-    if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
-      spp[[curSp()]]$mask$polyAddRem <- list()
-    }
-    spp[[curSp()]]$mask$polyAddRem <- c(spp[[curSp()]]$mask$polyAddRem, drawAddRem)
+    if (!rgeos::gContains(spp[[curSp()]]$procEnvs$bgExt, drawAddRem)) {
+      shinyLogs %>% writeLog(
+        type = 'error',
+        "The polygon is outside the background extent. Please draw a new polygon. (**)"
+      )
+      return()
+    } else {
+      # LOAD INTO SPP ####
+      if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
+        spp[[curSp()]]$mask$polyAddRem <- list()
+      }
+      spp[[curSp()]]$mask$polyAddRem <- c(spp[[curSp()]]$mask$polyAddRem, drawAddRem)
 
-    # GEPB: ADD METADATA ####
+      # GEPB: ADD METADATA ####
+    }
   })
 }
 
