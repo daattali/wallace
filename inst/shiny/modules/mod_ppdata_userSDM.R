@@ -1,10 +1,10 @@
 userSDM_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    fileInput(ns("userSDM"), label = "Upload Occurrence CSV")
+    fileInput(ns("userSDM"), label = "Upload SDM prediction (**)")
   )
 }
 
-userSDM_INFO <- infoGenerator(modName = "User-specified SDMs (**)",
-                               modAuts = "Dev-team Wallace (**)",
-                               pkgName = NULL)
+userSDM_INFO <- infoGenerator(modName = "User-specified SDM prediction (**)",
+                              modAuts = "Gonzalo E. Pinilla-Buitrago",
+                              pkgName = NULL)

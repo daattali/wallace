@@ -14,7 +14,7 @@ tagList(
     tabPanel("Model", value='model'),
     tabPanel("Visualize", value='vis'),
     tabPanel("Project", value='proj'),
-    # tabPanel("Post-Data(**)", value = 'ppdat'),
+    tabPanel("Post-Data(**)", value = 'ppdat'),
     tabPanel("Post-processing", value = 'mask'),
     tabPanel("Session Code", value='rmd'),
 
