@@ -65,6 +65,7 @@ drawAddRem_MOD <- function(input, output, session) {
       # LOAD INTO SPP ####
       if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
         spp[[curSp()]]$mask$polyAddRem <- list()
+        spp[[curSp()]]$mask$removePoly<- list()
       }
       spp[[curSp()]]$mask$polyAddRem <- c(spp[[curSp()]]$mask$polyAddRem, addRemPoly)
       # GEPB: ADD METADATA ####

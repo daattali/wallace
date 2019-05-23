@@ -185,6 +185,7 @@ function(input, output, session) {
   shinyjs::disable("dlPred")
   shinyjs::disable("dlProj")
   shinyjs::disable("dlMess")
+  shinyjs::disable("goDoAddRem")
   # shinyjs::disable("dlRMD")
 
   # Enable/disable buttons
@@ -211,6 +212,8 @@ function(input, output, session) {
     shinyjs::toggleState("dlPred", !is.null(spp[[curSp()]]$visualization$occPredVals))
     shinyjs::toggleState("dlProj", !is.null(spp[[curSp()]]$project$pjEnvs))
     shinyjs::toggleState("dlMess", !is.null(spp[[curSp()]]$project$messVals))
+    shinyjs::toggleState("goDoAddRem", length(spp[[curSp()]]$mask$polyAddRem) >
+                           length(spp[[curSp()]]$mask$removePoly))
     # shinyjs::toggleState("dlWhatever", !is.null(spp[[curSp()]]$whatever))
   })
 

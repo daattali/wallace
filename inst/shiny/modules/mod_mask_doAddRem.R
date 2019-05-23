@@ -12,19 +12,20 @@ doAddRem_MOD <- function(input, output, session) {
     # ERRORS ####
     # GEPB: Add possible errors
     # FUNCTION CALL ####
-    remBol <- ifelse(input$doAddRem == 'addMask', FALSE, TRUE)
+    removePoly <- ifelse(input$doAddRem == 'addMask', FALSE, TRUE)
     polyAddRem <- spp[[curSp()]]$mask$polyAddRem[[length(spp[[curSp()]]$mask$polyAddRem)]]
     doAddRem <- mask_doAddRem(polyAddRem,
                               spp[[curSp()]]$postProc$prediction,
-                              remBol,
+                              removePoly,
                               shinyLogs)
-    if (remBol == FALSE) {
+    if (removePoly == FALSE) {
       shinyLogs %>% writeLog("The polygon was added (**)")
     } else {
       shinyLogs %>% writeLog("The polygon was removed (**)")
     }
     # LOAD INTO SPP ####
     spp[[curSp()]]$postProc$prediction <- doAddRem
+    spp[[curSp()]]$mask$removePoly <- c(spp[[curSp()]]$mask$removePoly, removePoly)
 
     # GEPB: Add metadata ####
 
