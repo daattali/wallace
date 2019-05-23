@@ -160,7 +160,7 @@ function(input, output, session) {
                 "projArea" = projectArea_MAP,
                 "projTime" = projectTime_MAP,
                 "mess" = envSimilarity_MAP,
-                "addRemMask" = AddRem_MAP)
+                "addRemMask" = addRem_MAP)
     req(f)
     map %>% f(session)
   })

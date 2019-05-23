@@ -1,11 +1,21 @@
 drawAddRem_UI <- function(id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   tagList(
-    radioButtons(
-      "addRemSel", label = "Select input",
-      choices = list("draw" = 'maskDrawAddRem',
-                     "user" = 'maskUserAddRem'),
-      inline = TRUE
+    tags$div(
+      radioButtons(ns("addRemSel"), label = "Select input",
+                   choices = c("draw" = 'maskDrawAddRem',
+                               "user" = 'maskUserAddRem'),
+                   inline = TRUE),
+      conditionalPanel(sprintf("input['%s'] == 'maskUserAddRem'",
+                               ns("addRemSel")),
+                       fileInput(
+                         ns("userShpAddRem"),
+                         label = paste0('Upload polygon in shapefile (.shp, .shx, ',
+                                        '.dbf) or CSV file with field order ',
+                                        '(longitude, latitude)'),
+                         accept = c(".csv", ".dbf", ".shx", ".shp"),
+                         multiple = TRUE)
+      )
     )
   )
 }
@@ -21,7 +31,7 @@ drawAddRem_MOD <- function(input, output, session) {
       )
       return()
     }
-    if (is.null(spp[[curSp()]]$polyMaskXY)) {
+    if (is.null(spp[[curSp()]]$polyMaskXY) & input$addRemSel == 'maskDrawAddRem') {
       shinyLogs %>% writeLog(
         type = 'error',
         "The polygon has not been drawn and finished. Please use the draw toolbar on the left-hand of the map to complete the polygon."
@@ -29,11 +39,17 @@ drawAddRem_MOD <- function(input, output, session) {
       return()
     }
     # FUNCTION CALL ####
-    drawAddRem <- mask_drawAddRem(spp[[curSp()]]$polyMaskXY,
-                                  spp[[curSp()]]$polyMaskID,
-                                  shinyLogs)
+    if (input$addRemSel == 'maskDrawAddRem') {
+      addRemPoly <- mask_drawAddRem(spp[[curSp()]]$polyMaskXY,
+                                    spp[[curSp()]]$polyMaskID,
+                                    shinyLogs)
+    } else if (input$addRemSel == 'maskUserAddRem') {
+      addRemPoly <- mask_userAddRem(input$userShpAddRem$datapath,
+                                    input$userShpAddRem$name,
+                                    shinyLogs)
+    }
 
-    if (!rgeos::gContains(spp[[curSp()]]$procEnvs$bgExt, drawAddRem)) {
+    if (!rgeos::gContains(spp[[curSp()]]$procEnvs$bgExt, addRemPoly)) {
       shinyLogs %>% writeLog(
         type = 'error',
         "The polygon is outside the background extent. Please draw a new polygon. (**)"
@@ -45,15 +61,14 @@ drawAddRem_MOD <- function(input, output, session) {
       if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
         spp[[curSp()]]$mask$polyAddRem <- list()
       }
-      spp[[curSp()]]$mask$polyAddRem <- c(spp[[curSp()]]$mask$polyAddRem, drawAddRem)
-
+      spp[[curSp()]]$mask$polyAddRem <- c(spp[[curSp()]]$mask$polyAddRem, addRemPoly)
       # GEPB: ADD METADATA ####
     }
   })
 }
 
 # This include draw and do visualization on map
-AddRem_MAP <- function(map, session) {
+addRem_MAP <- function(map, session) {
   updateTabsetPanel(session, 'main', selected = 'Map')
   map %>% leaflet.extras::addDrawToolbar(
     targetGroup = 'draw',
