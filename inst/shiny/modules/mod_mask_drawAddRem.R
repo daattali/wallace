@@ -52,11 +52,16 @@ drawAddRem_MOD <- function(input, output, session) {
     if (!rgeos::gContains(spp[[curSp()]]$procEnvs$bgExt, addRemPoly)) {
       shinyLogs %>% writeLog(
         type = 'error',
-        "The polygon is outside the background extent. Please draw a new polygon. (**)"
+        "The polygon is outside the background extent. Please specify a new polygon. (**)"
       )
       return()
     } else {
-      shinyLogs %>% writeLog("The polygon is ready for action (add or remove) (**)")
+      if (input$addRemSel == 'maskDrawAddRem') {
+        shinyLogs %>% writeLog("The draw polygon is ready for action (add or remove) (**)")
+      } else if (input$addRemSel == 'maskUserAddRem') {
+        shinyLogs %>% writeLog("The user polygon is ready for action (add or remove) (**)")
+      }
+
       # LOAD INTO SPP ####
       if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
         spp[[curSp()]]$mask$polyAddRem <- list()
@@ -88,31 +93,29 @@ addRem_MAP <- function(map, session) {
     # add background polygon
     mapBgPolys(bgShpXY())
 
-  for(i in 1:length(polyAddRem)) {
-    xy <- ggplot2::fortify(polyAddRem[[i]])
-    if (i == 1) {
-      map %>%
-        addPolygons(lng = xy[,1], lat = xy[,2],
-                    weight = 4, color = "gray", group = 'maskShp') %>%
-        removeImage(layerId = 'mapPred') %>%
-        removeControl(layerId = 'train') %>%
-        addLegend("bottomright", colors = c('gray', 'purple'),
-                  title = "Expert Suitability (**)",
-                  labels = c("Absence (**)", "Presence (**)"),
-                  opacity = 1, layerId = 'expert') %>%
-        addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
-                       opacity = 0.7, group = 'mask', layerId = 'postPred',
-                       method = "ngb")
-    } else {
-      map %>% clearGroup('maskShp') %>%
-        addPolygons(lng = xy[,1], lat = xy[,2],
-                    weight = 4, color = "gray", group = 'maskShp') %>%
-        removeImage(layerId = 'postPred') %>%
-        addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
-                       opacity = 0.7, group = 'mask', layerId = 'postPred',
-                       method = "ngb")
+  xy <- ggplot2::fortify(polyAddRem[[length(polyAddRem)]])
 
-    }
+  if (length(polyAddRem) == 1) {
+    map %>%
+      addPolygons(lng = xy[,1], lat = xy[,2],
+                  weight = 4, color = "gray", group = 'maskShp') %>%
+      removeImage(layerId = 'mapPred') %>%
+      removeControl(layerId = 'train') %>%
+      addLegend("bottomright", colors = c('gray', 'purple'),
+                title = "Expert Suitability (**)",
+                labels = c("Absence (**)", "Presence (**)"),
+                opacity = 1, layerId = 'expert') %>%
+      addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
+                     opacity = 0.7, group = 'mask', layerId = 'postPred',
+                     method = "ngb")
+  } else {
+    map %>% clearGroup('maskShp') %>%
+      addPolygons(lng = xy[,1], lat = xy[,2],
+                  weight = 4, color = "gray", group = 'maskShp') %>%
+      removeImage(layerId = 'postPred') %>%
+      addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
+                     opacity = 0.7, group = 'mask', layerId = 'postPred',
+                     method = "ngb")
   }
 }
 

@@ -52,6 +52,5 @@ mask_userAddRem <- function(path, name, shinyLogs=NULL) {
                            vertex coordinates or shapefile (.shp, .shx, .dbf).')
     return()
   }
-  shinyLogs %>% writeLog("User-defined polygon to action (**)")
   return(polyAddRem)
 }
