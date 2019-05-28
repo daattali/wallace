@@ -14,7 +14,7 @@ tagList(
     tabPanel("Model", value='model'),
     tabPanel("Visualize", value='vis'),
     tabPanel("Project", value='proj'),
-    tabPanel("Post-Data(**)", value = 'ppdat'),
+    tabPanel("Post-Data(**)", value = 'ppdata'),
     tabPanel("Post-processing", value = 'mask'),
     tabPanel("Session Code", value='rmd'),
 
@@ -514,34 +514,34 @@ tagList(
           ),
           # POST PROCESSING DATA ####
           conditionalPanel(
-            "input.tabs == 'ppdat'",
+            "input.tabs == 'ppdata'",
             h4("Post-processing data (**)"),
             radioButtons(
-              "ppdatSel", "Modules Available:",
+              "ppdataSel", "Modules Available:",
               choices = list("User SDM (**)" = 'userSDM',
                              "Post-proc rasters (**)" = 'ppRasters'),
               selected = 'userSDM'),
             HTML('<hr>'),
             conditionalPanel(
-              "input.ppdatSel == 'userSDM'",
+              "input.ppdataSel == 'userSDM'",
               uiTop(userSDM_INFO),
-              userSDM_UI('ppdat_userSDM_uiID'),
+              userSDM_UI('ppdata_userSDM_uiID'),
               actionButton("goUserSDM", "Load SDM(**)"),
               HTML('<hr>')
             ),
             conditionalPanel(
-              "input.ppdatSel == 'ppRasters'",
+              "input.ppdataSel == 'ppRasters'",
               uiTop(ppRasters_INFO),
-              ppRasters_UI('ppdat_ppRasters_uiID'),
+              ppRasters_UI('ppdata_ppRasters_uiID'),
               actionButton("goPpRasters", "Load Rasters(**)"),
               HTML('<hr>')
             ),
             conditionalPanel(
-              "input.ppdatSel == 'userSDM'",
+              "input.ppdataSel == 'userSDM'",
               uiBottom(userSDM_INFO)
             ),
             conditionalPanel(
-              "input.ppdatSel == 'ppRasters'",
+              "input.ppdataSel == 'ppRasters'",
               uiBottom(ppRasters_INFO)
             )
           ),
