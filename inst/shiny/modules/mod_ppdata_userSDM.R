@@ -5,6 +5,6 @@ userSDM_UI <- function(id) {
   )
 }
 
-userSDM_INFO <- infoGenerator(modName = "User-specified SDMs (**)",
-                               modAuts = "Dev-team Wallace (**)",
+userSDM_INFO <- infoGenerator(modName = "User-specified SDMs",
+                               modAuts = "Wallace dev-team",
                                pkgName = NULL)

@@ -515,11 +515,11 @@ tagList(
           # POST PROCESSING DATA ####
           conditionalPanel(
             "input.tabs == 'ppdat'",
-            h4("Post-processing data (**)"),
+            h4("Post-processing"),
             radioButtons(
               "ppdatSel", "Modules Available:",
-              choices = list("User SDM (**)" = 'userSDM',
-                             "Post-proc rasters (**)" = 'ppRasters'),
+              choices = list("User-specified SDM" = 'userSDM',
+                             "Post-processed rasters" = 'ppRasters'),
               selected = 'userSDM'),
             HTML('<hr>'),
             conditionalPanel(
@@ -777,19 +777,19 @@ tagList(
                 conditionalPanel(
                   "input.modelSel == 'BIOCLIM'",
                   fluidRow(
-                    column(3, h5("Download Bioclim plot (**)")),
+                    column(3, h5("Download Bioclim plot")),
                     column(2, downloadButton('dlVisBioclim', "PNG file"))
                   )
                 ),
                 conditionalPanel(
                   "input.modelSel == 'Maxent'",
                   fluidRow(
-                    column(3, h5("Download Maxent plots (**)")),
+                    column(3, h5("Download Maxent plots")),
                     column(2, downloadButton('dlMaxentPlots', "ZIP file"))
                   ),
                   br(),
                   fluidRow(
-                    column(3, h5("Download Response plots (**)")),
+                    column(3, h5("Download Response plots")),
                     column(2, downloadButton('dlRespCurves', "ZIP file"))
                   )
                 ),
@@ -802,7 +802,7 @@ tagList(
                                                        "GRD" = 'raster',
                                                        "ASCII" = 'ascii',
                                                        "PNG" = 'png'))),
-                  column(2, downloadButton('dlPred', "Predition file(**)"))
+                  column(2, downloadButton('dlPred', "Prediction file"))
                 )
               ),
               conditionalPanel(
@@ -816,7 +816,7 @@ tagList(
                                                        "GRD" = 'raster',
                                                        "ASCII" = 'ascii',
                                                        "PNG" = 'png'))),
-                  column(2, downloadButton('dlProj', "Projection file(**)"))
+                  column(2, downloadButton('dlProj', "Projection file"))
                 ),
                 fluidRow(
                   column(3, h5("Download MESS (Select download file type**)")),
@@ -826,7 +826,7 @@ tagList(
                                                        "GRD" = 'raster',
                                                        "ASCII" = 'ascii',
                                                        "PNG" = 'png'))),
-                  column(2, downloadButton('dlMess', "MESS file(**)"))
+                  column(2, downloadButton('dlMess', "MESS file"))
                 )
               )
             )

@@ -31,7 +31,7 @@ mask_drawAddRem <- function(polyMaskXY, polyMaskID, shinyLogs = NULL) {
                                                    ID = polyMaskID)))
   ## Add shiny logs
   ## Example
-  # shinyLogs %>% writeLog(em(spName(occs)), ' : Draw polygon without buffer(**).')
+  # shinyLogs %>% writeLog(em(spName(occs)), ' : Draw polygon without buffer.')
   drawAddRemExt <- sp::SpatialPolygonsDataFrame(newPoly,
                                                 data = data.frame(x=1),
                                                 match.ID = FALSE)
