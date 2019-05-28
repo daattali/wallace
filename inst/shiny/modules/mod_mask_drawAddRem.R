@@ -103,7 +103,7 @@ addRem_MAP <- function(map, session) {
       removeImage(layerId = 'mapPred') %>%
       removeControl(layerId = 'train') %>%
       addLegend("bottomright", colors = c('gray', 'purple'),
-                title = "Expert Suitability (**)",
+                title = "Suitability<br>(User) (**)",
                 labels = c("Absence (**)", "Presence (**)"),
                 opacity = 1, layerId = 'expert') %>%
       addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),

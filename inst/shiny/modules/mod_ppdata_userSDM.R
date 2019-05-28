@@ -41,46 +41,51 @@ userSDM_MOD <- function(input, output, session) {
 userSDM_MAP <- function(map, session) {
   updateTabsetPanel(session, 'main', selected = 'Map')
   req(spp[[curSp()]]$postProc$prediction, spp[[curSp()]]$procEnvs$bgExt)
+  # Zoom
+  userRaster <- spp[[curSp()]]$postProc$prediction
+  userValues <- raster::values(userRaster)
+  zoomExt <- raster::extent(userRaster)
+  map %>%  fitBounds(lng1 = zoomExt[1], lng2 = zoomExt[2],
+                     lat1 = zoomExt[3], lat2 = zoomExt[4])
+
   map %>% clearMarkers() %>%
     clearShapes() %>%
     # add background polygon
     mapBgPolys(bgShpXY())
-    # removeImage(layerId = 'mapPred') %>%
-    # removeImage(layerId = 'postPred') %>%
-    # removeControl(layerId = 'train') %>%
-  map %>% addLegend("bottomright", colors = c('gray', 'purple'),
-                    title = "Expert Suitability (**)",
-                    labels = c("Absence (**)", "Presence (**)"),
-                    opacity = 1, layerId = 'expert') %>%
-    addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
-                   opacity = 0.7, group = 'mask', layerId = 'postPred',
-                   method = "ngb")
-#
-#
-#   xy <- ggplot2::fortify(polyAddRem[[length(polyAddRem)]])
-#
-#   if (length(polyAddRem) == 1) {
-#     map %>%
-#       addPolygons(lng = xy[,1], lat = xy[,2],
-#                   weight = 4, color = "gray", group = 'maskShp') %>%
-#       removeImage(layerId = 'mapPred') %>%
-#       removeControl(layerId = 'train') %>%
-#       addLegend("bottomright", colors = c('gray', 'purple'),
-#                 title = "Expert Suitability (**)",
-#                 labels = c("Absence (**)", "Presence (**)"),
-#                 opacity = 1, layerId = 'expert') %>%
-#       addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
-#                      opacity = 0.7, group = 'mask', layerId = 'postPred',
-#                      method = "ngb")
-#   } else {
-#     map %>% clearGroup('maskShp') %>%
-#       addPolygons(lng = xy[,1], lat = xy[,2],
-#                   weight = 4, color = "gray", group = 'maskShp') %>%
-#       removeImage(layerId = 'postPred') %>%
-#       addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
-#                      opacity = 0.7, group = 'mask', layerId = 'postPred',
-#                      method = "ngb")
-#   }
+
+  map %>% removeControl(layerId = "iguazo")
+
+  # Define raster colors and shiny legend
+  rasCols <- c("#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c")
+  # if it is threshold specified
+  if (length(unique(userValues)) == 3 |
+      length(unique(userValues)) == 2) {
+    map %>% removeImage(layerId = 'mapPred') %>%
+      removeImage(layerId = 'postPred') %>%
+      removeControl(layerId = 'expert') %>%
+      addLegend("bottomright", colors = c('gray', 'purple'),
+                      title = "Suitability<br>(User) (**)",
+                      labels = c("Absence (**)", "Presence (**)"),
+                      opacity = 1, layerId = 'expert') %>%
+      addRasterImage(userRaster, colors = c('gray', 'purple'),
+                     opacity = 0.7, group = 'mask', layerId = 'postPred',
+                     method = "ngb")
+  } else {
+    # if threshold specified
+    legendPal <- colorNumeric(rev(rasCols), userValues, na.color='transparent')
+    rasPal <- colorNumeric(rasCols, userValues, na.color='transparent')
+    map %>% removeImage(layerId = 'mapPred') %>%
+      removeImage(layerId = 'postPred') %>%
+      removeControl(layerId = 'expert') %>%
+      addLegend("bottomright", pal = legendPal, title = "Suitability<br>(User) (**)",
+                values = userValues, layerId = "expert",
+                labFormat = reverseLabels(2, reverse_order=TRUE)) %>%
+      addRasterImage(userRaster, colors = rasPal,
+                     opacity = 0.7, group = 'mask', layerId = 'postPred',
+                     method = "ngb")
+}
+
+
 }
 
 userSDM_INFO <- infoGenerator(modName = "User-specified SDM prediction (**)",

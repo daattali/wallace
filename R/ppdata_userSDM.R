@@ -34,6 +34,5 @@ ppdata_userSDM <- function(rasPath, rasName, shinyLogs = NULL) {
   if(is.na(raster::crs(r))) {
     shinyLogs %>% writeLog(type = "warning",'Input rasters have undefined coordinate reference system (CRS). Mapping functionality in components Visualize Model Results and Project Model will not work. If you wish to map rasters in these components, please define their projections and upload again. See guidance text in this module for more details.')
   }
-  print("Anakyn: It is working!")
   return(r)
 }
