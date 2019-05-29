@@ -3,20 +3,20 @@ tagList(
   navbarPage(
     theme = shinythemes::shinytheme('united'), id = 'tabs', collapsible = TRUE,
     title = glue('Wallace v{packageVersion("wallace")}'),
-    tabPanel("Intro", value='intro'),
-    tabPanel("Occ Data", value='occs'),
-    tabPanel("Env Data", value='envs'),
-    tabPanel("Process Occs", value='poccs'),
-    tabPanel("Process Envs", value='penvs'),
+    tabPanel("Intro", value = 'intro'),
+    tabPanel("Occ Data", value = 'occs'),
+    tabPanel("Env Data", value = 'envs'),
+    tabPanel("Process Occs", value = 'poccs'),
+    tabPanel("Process Envs", value = 'penvs'),
     # tabPanel("Sampling", value='samp'),
-    tabPanel("Env Space", value='espace'),
-    tabPanel("Partition Occs", value='part'),
-    tabPanel("Model", value='model'),
-    tabPanel("Visualize", value='vis'),
-    tabPanel("Project", value='proj'),
+    tabPanel("Env Space", value = 'espace'),
+    tabPanel("Partition Occs", value = 'part'),
+    tabPanel("Model", value = 'model'),
+    tabPanel("Visualize", value = 'vis'),
+    tabPanel("Project", value = 'proj'),
     tabPanel("Post-Data(**)", value = 'ppdata'),
     tabPanel("Post-processing", value = 'mask'),
-    tabPanel("Session Code", value='rmd'),
+    tabPanel("Session Code", value = 'rmd'),
 
     fluidRow(
       column(
@@ -25,6 +25,11 @@ tagList(
         wellPanel(
           tags$link(href = "css/styles.css", rel = "stylesheet"),
           tags$script(src = "js/scroll.js"),
+          conditionalPanel(
+            "input.tabs == 'intro'",
+            selectInput("buildSDM", label = 'Use Wallace for build prediction? (**)',
+                        choices = list(TRUE, FALSE))
+          ),
           conditionalPanel(
             "input.tabs == 'intro'",
             includeMarkdown("Rmd/text_intro_tab.Rmd")
@@ -516,33 +521,34 @@ tagList(
           conditionalPanel(
             "input.tabs == 'ppdata'",
             h4("Post-processing data (**)"),
-            radioButtons(
-              "ppdataSel", "Modules Available:",
-              choices = list("User SDM (**)" = 'userSDM',
-                             "Post-proc rasters (**)" = 'ppRasters'),
-              selected = 'userSDM'),
+            conditionalPanel("input.buildSDM == 'TRUE'",
+                             radioButtons(
+                               "ppdataSel1", "Modules Available:",
+                               choices = list("Post-proc rasters (**)" = 'ppRasters'),
+                               selected = 'ppRasters')),
+            conditionalPanel("input.buildSDM == 'FALSE'",
+                             radioButtons(
+                               "ppdataSel2", "Modules Available:",
+                               choices = list("User SDM (**)" = 'userSDM',
+                                              "Post-proc rasters (**)" = 'ppRasters'),
+                               selected = 'userSDM')),
             HTML('<hr>'),
             conditionalPanel(
-              "input.ppdataSel == 'userSDM'",
-              uiTop(userSDM_INFO),
-              userSDM_UI('ppdata_userSDM_uiID'),
-              actionButton("goUserSDM", "Load SDM(**)"),
-              HTML('<hr>')
-            ),
-            conditionalPanel(
-              "input.ppdataSel == 'ppRasters'",
+              "(input.ppdataSel1 == 'ppRasters' & input.buildSDM == 'TRUE') |
+              input.ppdataSel2 == 'ppRasters'",
               uiTop(ppRasters_INFO),
               ppRasters_UI('ppdata_ppRasters_uiID'),
               actionButton("goPpRasters", "Load Rasters(**)"),
-              HTML('<hr>')
-            ),
-            conditionalPanel(
-              "input.ppdataSel == 'userSDM'",
-              uiBottom(userSDM_INFO)
-            ),
-            conditionalPanel(
-              "input.ppdataSel == 'ppRasters'",
+              HTML('<hr>'),
               uiBottom(ppRasters_INFO)
+            ),
+            conditionalPanel(
+              "input.ppdataSel2 == 'userSDM' & input.buildSDM == 'FALSE'",
+              uiTop(userSDM_INFO),
+              userSDM_UI('ppdata_userSDM_uiID'),
+              actionButton("goUserSDM", "Load SDM(**)"),
+              HTML('<hr>'),
+              uiBottom(userSDM_INFO)
             )
           ),
           # POST PROCESING MASKRANGER ####

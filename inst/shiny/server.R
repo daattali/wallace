@@ -54,6 +54,8 @@ function(input, output, session) {
     tags$div(id='logHeader', tags$div(id='logContent', HTML(paste0(shinyLogs(), "<br>", collapse = ""))))
   })
 
+
+
   ######################## #
   ### GUIDANCE TEXT ####
   ######################## #
@@ -71,7 +73,7 @@ function(input, output, session) {
   # tab and module-level reactives
   component <- reactive({input$tabs})
   module <- reactive({
-    if(component() == "intro") "intro"
+    if(component() == "intro") input$buildSDM
     else if(component() == "occs") input$occsSel
     else if(component() == "poccs") input$procOccsSel
     else if(component() == "envs") input$envsSel
@@ -90,6 +92,32 @@ function(input, output, session) {
   observe({
     gtext$curComponent <- paste0("gtext_", component(), ".Rmd")
     gtext$curModule <- paste0("gtext_", component(), "_", module(), ".Rmd")
+  })
+
+  # Show/hide tabs if the user will build the model on Wallace
+  observeEvent(input$buildSDM, {
+    buildSDM <- input$buildSDM
+    if (buildSDM == TRUE) {
+      showTab(inputId = 'tabs', target = 'occs')
+      showTab(inputId = 'tabs', target = 'poccs')
+      showTab(inputId = 'tabs', target = 'envs')
+      showTab(inputId = 'tabs', target = 'penvs')
+      showTab(inputId = 'tabs', target = 'espace')
+      showTab(inputId = 'tabs', target = 'part')
+      showTab(inputId = 'tabs', target = 'model')
+      showTab(inputId = 'tabs', target = 'vis')
+      showTab(inputId = 'tabs', target = 'proj')
+    } else {
+      hideTab(inputId = 'tabs', target = 'occs')
+      hideTab(inputId = 'tabs', target = 'poccs')
+      hideTab(inputId = 'tabs', target = 'envs')
+      hideTab(inputId = 'tabs', target = 'penvs')
+      hideTab(inputId = 'tabs', target = 'espace')
+      hideTab(inputId = 'tabs', target = 'part')
+      hideTab(inputId = 'tabs', target = 'model')
+      hideTab(inputId = 'tabs', target = 'vis')
+      hideTab(inputId = 'tabs', target = 'proj')
+    }
   })
 
   ######################## #
