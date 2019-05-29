@@ -81,9 +81,8 @@ function(input, output, session) {
     else if(component() == "model") input$modelSel
     else if(component() == "vis") input$visSel
     else if(component() == "proj") input$projSel
-    else if(component() == "mask") {
-      if (input$maskSel == 'addRemMask') input$addRemSel
-    }
+    else if(component() == "ppdata") input$ppdataSel
+    else if(component() == "mask") input$maskSel
     #else if(component() == "rmd") ''
   })
 
@@ -141,7 +140,8 @@ function(input, output, session) {
   # MAPPING LOGIC ####
   observe({
     # must have one species selected and occurrence data
-    req(length(curSp()) == 1, occs(), module())
+    # req(length(curSp()) == 1, occs(), module())
+    req(length(curSp()) == 1, module())
     f <- switch(module(),
                 "dbOccs" = queryDb_MAP,
                 "userOccs" = userOccs_MAP,
@@ -162,8 +162,8 @@ function(input, output, session) {
                 "projArea" = projectArea_MAP,
                 "projTime" = projectTime_MAP,
                 "mess" = envSimilarity_MAP,
-                "maskDrawAddRem" = drawAddRem_MAP,
-                "maskDoAddRem" = doAddRem_MAP)
+                "addRemMask" = addRem_MAP,
+                "userSDM" = userSDM_MAP)
     req(f)
     map %>% f(session)
   })
@@ -188,6 +188,7 @@ function(input, output, session) {
   shinyjs::disable("dlPred")
   shinyjs::disable("dlProj")
   shinyjs::disable("dlMess")
+  shinyjs::disable("goDoAddRem")
   # shinyjs::disable("dlRMD")
 
   # Enable/disable buttons
@@ -214,6 +215,8 @@ function(input, output, session) {
     shinyjs::toggleState("dlPred", !is.null(spp[[curSp()]]$visualization$occPredVals))
     shinyjs::toggleState("dlProj", !is.null(spp[[curSp()]]$project$pjEnvs))
     shinyjs::toggleState("dlMess", !is.null(spp[[curSp()]]$project$messVals))
+    shinyjs::toggleState("goDoAddRem", length(spp[[curSp()]]$mask$polyAddRem) >
+                           length(spp[[curSp()]]$mask$removePoly))
     # shinyjs::toggleState("dlWhatever", !is.null(spp[[curSp()]]$whatever))
   })
 
@@ -1290,7 +1293,20 @@ function(input, output, session) {
   )
 
   ########################################### #
-  ### COMPONENT: POST-PROCESSING ####
+  ### COMPONENT: POST-PROCESSING DATA (**) ####
+  ########################################### #
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # Module add user SDM prediction (**) ####
+  # # # # # # # # # # # # # # # # # # # # #
+
+  observeEvent(input$goUserSDM, {
+    userSDM <- callModule(userSDM_MOD, 'ppdata_userSDM_uiID')
+    userSDM()
+  })
+
+  ########################################### #
+  ### COMPONENT: POST-PROCESSING (**) ####
   ########################################### #
 
   # # # # # # # # # # # # # # # # # # # # #
