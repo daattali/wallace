@@ -53,8 +53,6 @@ userSDM_MAP <- function(map, session) {
     # add background polygon
     mapBgPolys(bgShpXY())
 
-  map %>% removeControl(layerId = "iguazo")
-
   # Define raster colors and shiny legend
   rasCols <- c("#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c")
   # if it is threshold specified
@@ -83,7 +81,7 @@ userSDM_MAP <- function(map, session) {
       addRasterImage(userRaster, colors = rasPal,
                      opacity = 0.7, group = 'mask', layerId = 'postPred',
                      method = "ngb")
-}
+  }
 
 
 }

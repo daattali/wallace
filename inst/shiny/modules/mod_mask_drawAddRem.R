@@ -24,10 +24,11 @@ drawAddRem_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
     # GEPB: Polygon outside boundaries
-    if (is.null(spp[[curSp()]]$postProc$prediction)) {
+    binBool <- length(unique(raster::values(spp[[curSp()]]$postProc$prediction)))
+    if (!(binBool == 3 | binBool == 2)) {
       shinyLogs %>% writeLog(
         type = 'error',
-        "SDM predicion need to be thresholded. Please provide a threshold in the Visualize component."
+        "SDM predicion need to be thresholded. Please provide a threshold in the Visualize component or provide a thresholded prediction in the Post-Data component (**)."
       )
       return()
     }
@@ -49,7 +50,7 @@ drawAddRem_MOD <- function(input, output, session) {
                                     shinyLogs)
     }
 
-    if (!rgeos::gContains(spp[[curSp()]]$procEnvs$bgExt, addRemPoly)) {
+    if (rgeos::gDisjoint(spp[[curSp()]]$procEnvs$bgExt, addRemPoly)) {
       shinyLogs %>% writeLog(
         type = 'error',
         "The polygon is outside the background extent. Please specify a new polygon. (**)"
@@ -86,22 +87,27 @@ addRem_MAP <- function(map, session) {
     editOptions = leaflet.extras::editToolbarOptions()
   )
 
-  req(spp[[curSp()]]$mask$polyAddRem, spp[[curSp()]]$postProc$prediction)
-  polyAddRem <- spp[[curSp()]]$mask$polyAddRem
+  req(spp[[curSp()]]$postProc$prediction)
+
+  zoomExt <- raster::extent(spp[[curSp()]]$postProc$prediction)
+  map %>% fitBounds(lng1 = zoomExt[1], lng2 = zoomExt[2],
+                    lat1 = zoomExt[3], lat2 = zoomExt[4]) %>%
+    removeImage(layerId = 'mapPred') %>%
+    removeControl(layerId = 'train')
 
   map %>% clearMarkers() %>%
     clearShapes() %>%
     # add background polygon
     mapBgPolys(bgShpXY())
 
-  xy <- ggplot2::fortify(polyAddRem[[length(polyAddRem)]])
+  rasterValues <- raster::values(spp[[curSp()]]$postProc$prediction)
 
-  if (length(polyAddRem) == 1) {
+  # Define raster colors and shiny legend
+  rasCols <- c("#2c7bb6", "#abd9e9", "#ffffbf", "#fdae61", "#d7191c")
+  # if it is threshold specified
+  if (length(unique(rasterValues)) == 3 |
+      length(unique(rasterValues)) == 2) {
     map %>%
-      addPolygons(lng = xy[,1], lat = xy[,2],
-                  weight = 4, color = "gray", group = 'maskShp') %>%
-      removeImage(layerId = 'mapPred') %>%
-      removeControl(layerId = 'train') %>%
       addLegend("bottomright", colors = c('gray', 'purple'),
                 title = "Suitability<br>(User) (**)",
                 labels = c("Absence (**)", "Presence (**)"),
@@ -110,13 +116,33 @@ addRem_MAP <- function(map, session) {
                      opacity = 0.7, group = 'mask', layerId = 'postPred',
                      method = "ngb")
   } else {
+    # if threshold specified
+    legendPal <- colorNumeric(rev(rasCols), rasterValues, na.color='transparent')
+    rasPal <- colorNumeric(rasCols, rasterValues, na.color='transparent')
+    map %>%
+      addLegend("bottomright", pal = legendPal, title = "Suitability<br>(User) (**)",
+                values = rasterValues, layerId = "expert",
+                labFormat = reverseLabels(2, reverse_order=TRUE)) %>%
+      addRasterImage(spp[[curSp()]]$postProc$prediction, colors = rasPal,
+                     opacity = 0.7, group = 'mask', layerId = 'postPred',
+                     method = "ngb")
+  }
+  # If there is a new polygon
+  req(spp[[curSp()]]$mask$polyAddRem)
+  polyAddRem <- spp[[curSp()]]$mask$polyAddRem
+  xy <- ggplot2::fortify(polyAddRem[[length(polyAddRem)]])
+  if (length(polyAddRem) == 1) {
+    map %>%
+      addPolygons(lng = xy[,1], lat = xy[,2],
+                  weight = 4, color = "gray", group = 'maskShp')
+  } else {
     map %>% clearGroup('maskShp') %>%
       addPolygons(lng = xy[,1], lat = xy[,2],
                   weight = 4, color = "gray", group = 'maskShp') %>%
       removeImage(layerId = 'postPred') %>%
-      addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
-                     opacity = 0.7, group = 'mask', layerId = 'postPred',
-                     method = "ngb")
+      addRasterImage(spp[[curSp()]]$postProc$prediction,
+                     colors = c('gray', 'purple'), opacity = 0.7, group = 'mask',
+                     layerId = 'postPred', method = "ngb")
   }
 }
 
