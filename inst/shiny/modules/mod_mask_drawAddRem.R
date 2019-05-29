@@ -148,5 +148,4 @@ addRem_MAP <- function(map, session) {
 
 addRem_INFO <- infoGenerator(modName = "Editing using expert maps (**)",
                              modAuts = "Gonzalo E. Pinilla-Buitrago, Peter Galante",
-                             # GEPB: Change name when a new version is released.
-                             pkgName = "maskedRangeR")
+                             pkgName = "maskRangeR")

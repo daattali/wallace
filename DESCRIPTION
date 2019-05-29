@@ -38,6 +38,7 @@ Imports:
     magrittr,
     maptools,
     mapview,
+    maskRangeR,
     neotoma,
     paleobioDB,
     rangeModelMetadata,
