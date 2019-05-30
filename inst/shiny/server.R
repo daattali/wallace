@@ -98,7 +98,6 @@ function(input, output, session) {
   observeEvent(input$buildSDM, {
     buildSDM <- input$buildSDM
     if (buildSDM == TRUE) {
-      showTab(inputId = 'tabs', target = 'occs')
       showTab(inputId = 'tabs', target = 'poccs')
       showTab(inputId = 'tabs', target = 'envs')
       showTab(inputId = 'tabs', target = 'penvs')
@@ -108,7 +107,6 @@ function(input, output, session) {
       showTab(inputId = 'tabs', target = 'vis')
       showTab(inputId = 'tabs', target = 'proj')
     } else {
-      hideTab(inputId = 'tabs', target = 'occs')
       hideTab(inputId = 'tabs', target = 'poccs')
       hideTab(inputId = 'tabs', target = 'envs')
       hideTab(inputId = 'tabs', target = 'penvs')

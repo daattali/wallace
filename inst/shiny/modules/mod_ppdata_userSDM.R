@@ -20,7 +20,7 @@ userSDM_MOD <- function(input, output, session) {
                                  rasName = input$userSDMs$name[i])
       # Create name for curSp()
       newSppName <- fileNameNoExt(formatSpName(input$userSDMs$name[i]))
-      spp[[newSppName]] <- list()
+      if (!(newSppName %in% names(spp))) spp[[newSppName]] <- list()
       # Create new bgExt based on cells with data
       # rasterExt <- userSDMs > -Inf
       # extPoly <- raster::rasterToPolygons(rasterExt, dissolve = TRUE)

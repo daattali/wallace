@@ -521,21 +521,13 @@ tagList(
           conditionalPanel(
             "input.tabs == 'ppdata'",
             h4("Post-processing data (**)"),
-            conditionalPanel("input.buildSDM == 'TRUE'",
-                             radioButtons(
-                               "ppdataSel1", "Modules Available:",
-                               choices = list("Post-proc rasters (**)" = 'ppRasters'),
-                               selected = 'ppRasters')),
-            conditionalPanel("input.buildSDM == 'FALSE'",
-                             radioButtons(
-                               "ppdataSel2", "Modules Available:",
-                               choices = list("User SDM (**)" = 'userSDM',
-                                              "Post-proc rasters (**)" = 'ppRasters'),
-                               selected = 'userSDM')),
+            radioButtons("ppdataSel", "Modules Available:",
+                         choices = list("User SDM (**)" = 'userSDM',
+                                        "Post-proc rasters (**)" = 'ppRasters'),
+                         selected = 'userSDM'),
             HTML('<hr>'),
             conditionalPanel(
-              "(input.ppdataSel1 == 'ppRasters' & input.buildSDM == 'TRUE') |
-              input.ppdataSel2 == 'ppRasters'",
+              "input.ppdataSel == 'ppRasters'",
               uiTop(ppRasters_INFO),
               ppRasters_UI('ppdata_ppRasters_uiID'),
               actionButton("goPpRasters", "Load Rasters(**)"),
@@ -543,7 +535,7 @@ tagList(
               uiBottom(ppRasters_INFO)
             ),
             conditionalPanel(
-              "input.ppdataSel2 == 'userSDM' & input.buildSDM == 'FALSE'",
+              "input.ppdataSel == 'userSDM'",
               uiTop(userSDM_INFO),
               userSDM_UI('ppdata_userSDM_uiID'),
               actionButton("goUserSDM", "Load SDM(**)"),
