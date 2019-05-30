@@ -89,4 +89,4 @@ userSDM_MAP <- function(map, session) {
 
 userSDM_INFO <- infoGenerator(modName = "User-specified SDM prediction (**)",
                               modAuts = "Gonzalo E. Pinilla-Buitrago",
-                              pkgName = NULL)
+                              pkgName = "raster")
