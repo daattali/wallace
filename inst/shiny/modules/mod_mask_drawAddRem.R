@@ -28,7 +28,7 @@ drawAddRem_MOD <- function(input, output, session) {
     if (!(binBool == 3 | binBool == 2)) {
       shinyLogs %>% writeLog(
         type = 'error',
-        "SDM predicion need to be thresholded. Please provide a threshold in the Visualize component or provide a thresholded prediction in the Post-Data component (**)."
+        "SDM prediction needs to be thresholded. Please provide a threshold in the Visualize component or provide a thresholded prediction in the Post-Data component (**)."
       )
       return()
     }

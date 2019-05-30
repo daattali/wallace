@@ -1,5 +1,5 @@
 ##### QUESTIONS
-  # 1. error with message: "The draw polygon did not include all localities(**). Remove the polygon before to draw a new one."
+  # 1. error with message: "The draw polygon did not include all localities. Remove the polygon before drawing a new one."
 
 
 #### COMPONENT 4: Process Environmental Data

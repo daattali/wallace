@@ -763,19 +763,19 @@ tagList(
                 conditionalPanel(
                   "input.modelSel == 'BIOCLIM'",
                   fluidRow(
-                    column(3, h5("Download Bioclim plot (**)")),
+                    column(3, h5("Download Bioclim plot")),
                     column(2, downloadButton('dlVisBioclim', "PNG file"))
                   )
                 ),
                 conditionalPanel(
                   "input.modelSel == 'Maxent'",
                   fluidRow(
-                    column(3, h5("Download Maxent plots (**)")),
+                    column(3, h5("Download Maxent plots")),
                     column(2, downloadButton('dlMaxentPlots', "ZIP file"))
                   ),
                   br(),
                   fluidRow(
-                    column(3, h5("Download Response plots (**)")),
+                    column(3, h5("Download Response plots")),
                     column(2, downloadButton('dlRespCurves', "ZIP file"))
                   )
                 ),
@@ -788,7 +788,7 @@ tagList(
                                                        "GRD" = 'raster',
                                                        "ASCII" = 'ascii',
                                                        "PNG" = 'png'))),
-                  column(2, downloadButton('dlPred', "Predition file(**)"))
+                  column(2, downloadButton('dlPred', "Prediction file"))
                 )
               ),
               conditionalPanel(
@@ -802,7 +802,7 @@ tagList(
                                                        "GRD" = 'raster',
                                                        "ASCII" = 'ascii',
                                                        "PNG" = 'png'))),
-                  column(2, downloadButton('dlProj', "Projection file(**)"))
+                  column(2, downloadButton('dlProj', "Projection file"))
                 ),
                 fluidRow(
                   column(3, h5("Download MESS (Select download file type**)")),
@@ -812,7 +812,7 @@ tagList(
                                                        "GRD" = 'raster',
                                                        "ASCII" = 'ascii',
                                                        "PNG" = 'png'))),
-                  column(2, downloadButton('dlMess', "MESS file(**)"))
+                  column(2, downloadButton('dlMess', "MESS file"))
                 )
               )
             )
