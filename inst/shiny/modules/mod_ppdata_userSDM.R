@@ -2,7 +2,7 @@ userSDM_UI <- function(id) {
   ns <- NS(id)
   tagList(
     fileInput(ns("userSDMs"), label = "Upload SDM predictions (**)",
-      multiple = TRUE)
+      multiple = TRUE, accept = c(".tif", ".asc"))
   )
 }
 
@@ -18,6 +18,7 @@ userSDM_MOD <- function(input, output, session) {
     for (i in 1:length(input$userSDMs$name)) {
       userSDMs <- ppdata_userSDM(rasPath = input$userSDMs$datapath[i],
                                  rasName = input$userSDMs$name[i])
+      shinyLogs %>% writeLog("User SDM prediction loaded (**)")
       # Create name for curSp()
       newSppName <- fileNameNoExt(formatSpName(input$userSDMs$name[i]))
       if (!(newSppName %in% names(spp))) spp[[newSppName]] <- list()
