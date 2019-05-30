@@ -181,7 +181,7 @@ function(input, output, session) {
                 "bgSel" = bgExtent_MAP,
                 "bgUser" = userBgExtent_MAP,
                 "bgDraw" = drawBgExtent_MAP,
-                "biasFile" = mapBias_MAP,
+                #"biasFile" = mapBias_MAP,
                 "nsp" = partitionNonSpat_MAP,
                 "sp" = partitionSpat_MAP,
                 "mapPreds" = mapPreds_MAP,

@@ -246,49 +246,49 @@ tagList(
             )
           ),
           # SAMPLING BIAS ####
-          conditionalPanel(
-            "input.tabs == 'samp'",
-            h4("Accounting for Sampling Bias"),
-            radioButtons(
-              "samplingBias", "Modules Available:",
-              choices = list("User-specified" = "biasBgUser",
-                             "Make Target Group" = "biasBgMake",
-                             #"Sampling Covariates" = "sampCov",
-                             "Bias Surface" = "biasFile")
-            ),
-            tags$hr(),
-            conditionalPanel(
-              "input.samplingBias == 'bgUserTarget'",
-              #uiTop(bgExtent_INFO),
-              div("Upload custom background", id="stepText"), br(), br(),
-              userBiasBg_UI('samp_biasBG_uiID'),
-              actionButton("goUserBiasBgUpload", "Select"), br(), br()#,
-            ),
-            conditionalPanel(
-              "input.samplingBias == 'biasBgMake'",
-              #uiTop(bgExtent_INFO),
-              div("Step 1:", id="step"), div("Specify Target Group Species", id="stepText"), br(), br(),
-              queryDb_UI('samp_queryDb_uiID'),
-              actionButton("goTargetDbOccs", "Query Database"), br(), br()#,
-            ),
+          # conditionalPanel(
+          #   "input.tabs == 'samp'",
+          #   h4("Accounting for Sampling Bias"),
+          #   radioButtons(
+          #     "samplingBias", "Modules Available:",
+          #     choices = list("User-specified" = "biasBgUser",
+          #                    "Make Target Group" = "biasBgMake",
+          #                    #"Sampling Covariates" = "sampCov",
+          #                    "Bias Surface" = "biasFile")
+          #   ),
+          #   tags$hr(),
+            # conditionalPanel(
+            #   "input.samplingBias == 'bgUserTarget'",
+            #   #uiTop(bgExtent_INFO),
+            #   div("Upload custom background", id="stepText"), br(), br(),
+            #   userBiasBg_UI('samp_biasBG_uiID'),
+            #   actionButton("goUserBiasBgUpload", "Select"), br(), br()#,
+            # ),
+            # conditionalPanel(
+            #   "input.samplingBias == 'biasBgMake'",
+            #   #uiTop(bgExtent_INFO),
+            #   div("Step 1:", id="step"), div("Specify Target Group Species", id="stepText"), br(), br(),
+            #   queryDb_UI('samp_queryDb_uiID'),
+            #   actionButton("goTargetDbOccs", "Query Database"), br(), br()#,
+            # ),
             # Placeholder not implemented yet
             # conditionalPanel("input.samplingBias == 'sampCov'",
             #                  #uiTop(userBgExtent_INFO),
             #                  div("Step 1:", id="step"), div("Choose Background Extent", id="stepText"), br(), br(),
             #                  userBgExtent_UI('c4_userBgExtent'),
             #                  actionButton("goUserBg", "Load")),
-            conditionalPanel(
-              "input.samplingBias == 'biasFile'",
-              #uiTop(drawBgExtent_INFO),
-              div("Upload Bias File", id="stepText"), br(), br(),
-              userBiasFile_UI('samp_biasFileUpload'),
-              actionButton("goBiasFileUpload", "Upload")
-            ),
-            tags$hr()
+            # conditionalPanel(
+            #   "input.samplingBias == 'biasFile'",
+            #   #uiTop(drawBgExtent_INFO),
+            #   div("Upload Bias File", id="stepText"), br(), br(),
+            #   userBiasFile_UI('samp_biasFileUpload'),
+            #   actionButton("goBiasFileUpload", "Upload")
+            # ),
+            # tags$hr()
             #conditionalPanel("input.procEnvsSel == 'bgTarget'", uiBottom(bgExtent_INFO)),
             #conditionalPanel("input.procEnvsSel == 'sampCov'", uiBottom(userBgExtent_INFO)),
             #conditionalPanel("input.procEnvsSel == 'biasSurf'", uiBottom(drawBgExtent_INFO))
-          ),
+          # ),
           # ESPACE ####
           conditionalPanel(
             "input.tabs == 'espace'",
