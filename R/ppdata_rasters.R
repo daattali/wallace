@@ -28,17 +28,22 @@
 #'
 
 ppdata_rasters <- function(rasPath, rasName, shinyLogs = NULL) {
-  # add conditional about same resolution
   smartProgress(shinyLogs, message = "Reading in rasters...", {
-    rasStack <- raster::stack(rasPath)
+    listPpRas <- lapply(X = rasPath, FUN = raster::raster)
   })
-  # assign names
-  names(rasStack) <- fileNameNoExt(rasName)
-
-  shinyLogs %>% writeLog("Raster: User input.")
-
-  if(is.na(raster::crs(rasStack))) {
-    shinyLogs %>% writeLog(type = "warning",'Input rasters have undefined coordinate reference system (CRS). Mapping functionality in components Visualize Model Results and Project Model will not work. If you wish to map rasters in these components, please define their projections and upload again. See guidance text in this module for more details.')
+  sameAtt <- raster::compareRaster(listPpRas, stopiffalse = FALSE)
+  if (sameAtt == FALSE) {
+    shinyLogs %>%
+      writeLog(type = 'error',
+               "Rasters don't have the same resolution, extent, crs or origin. (**)")
+    return()
   }
-  return(rasStack)
+  # assign names
+  listPpRas <- raster::stack(listPpRas)
+  names(listPpRas) <- fileNameNoExt(rasName)
+
+  shinyLogs %>% writeLog("Post-processing rasters uploaded (**)")
+  print("something")
+
+  return(listPpRas)
 }

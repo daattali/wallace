@@ -1331,6 +1331,15 @@ function(input, output, session) {
     userSDM()
   })
 
+  # # # # # # # # # # # # # # # # # # # # #
+  # Module add user SDM prediction (**) ####
+  # # # # # # # # # # # # # # # # # # # # #
+
+  observeEvent(input$goPpRasters, {
+    ppRasters <- callModule(ppRasters_MOD, 'ppdata_ppRasters_uiID')
+    ppRasters()
+  })
+
   ########################################### #
   ### COMPONENT: POST-PROCESSING (**) ####
   ########################################### #

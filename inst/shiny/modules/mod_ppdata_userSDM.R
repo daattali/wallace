@@ -17,7 +17,8 @@ userSDM_MOD <- function(input, output, session) {
     # FUNCTION CALL ####
     for (i in 1:length(input$userSDMs$name)) {
       userSDMs <- ppdata_userSDM(rasPath = input$userSDMs$datapath[i],
-                                 rasName = input$userSDMs$name[i])
+                                 rasName = input$userSDMs$name[i],
+                                 shinyLogs)
       shinyLogs %>% writeLog("User SDM prediction loaded (**)")
       # Create name for curSp()
       newSppName <- fileNameNoExt(formatSpName(input$userSDMs$name[i]))
