@@ -39,11 +39,9 @@ ppdata_rasters <- function(rasPath, rasName, shinyLogs = NULL) {
     return()
   }
   # assign names
-  listPpRas <- raster::stack(listPpRas)
   names(listPpRas) <- fileNameNoExt(rasName)
 
   shinyLogs %>% writeLog("Post-processing rasters uploaded (**)")
-  print("something")
 
   return(listPpRas)
 }

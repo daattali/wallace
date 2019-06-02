@@ -1,0 +1,14 @@
+---
+title: 'mask'
+output: html_document
+---
+
+### **Component: maskRangeR **
+
+**ORIENTATION**
+
+text
+
+**REFERENCES**
+
+references

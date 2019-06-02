@@ -550,7 +550,7 @@ tagList(
             radioButtons(
               "maskSel", "Modules Available:",
               choices = list("Expert Driven: Editing using expert maps" = 'addRemMask',
-                             "Data Driven: Masking by land cover" = 'olinMask'),
+                             "Data Driven: Masking by land cover" = 'dataDrivenMask'),
               selected = 'addRemMask'),
             HTML('<hr>'),
             conditionalPanel(
@@ -563,6 +563,14 @@ tagList(
               actionButton("goDoAddRem", "Apply expert knowledge"),
               HTML('<hr>'),
               uiBottom(addRem_INFO)
+            ),
+            conditionalPanel(
+              "input.maskSel == 'dataDrivenMask'",
+              uiTop(dataDriven_INFO),
+              dataDriven_UI('mask_dataDriven_uiID'),
+              actionButton("goDataDriven", "Mask (**)"),
+              HTML('<hr>'),
+              uiBottom(dataDriven_INFO)
             )
           ),
           # SESSION CODE ####
@@ -665,6 +673,10 @@ tagList(
               conditionalPanel(
                 "input.tabs == 'espace' && input.espaceSel == 'nicheOv'",
                 nicheOv_resultsUI("cEspace_nicheOv_uiID")
+              ),
+              conditionalPanel(
+                "input.tabs == 'ppdata' && input.ppdataSel == 'ppRasters'",
+                verbatimTextOutput('ppRastersPrint')
               )
             ),
             tabPanel(
@@ -805,6 +817,13 @@ tagList(
                                                        "ASCII" = 'ascii',
                                                        "PNG" = 'png'))),
                   column(2, downloadButton('dlMess', "MESS file"))
+                )
+              ),
+              conditionalPanel(
+                "input.tabs == 'ppdata'",
+                br(),
+                fluidRow(
+                  column(3, h5("No download data available in this component"))
                 )
               )
             )

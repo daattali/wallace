@@ -326,7 +326,7 @@ function(input, output, session) {
   #                 scrollX=TRUE, scrollY=400)
   output$occTbl <- DT::renderDataTable({
     # check if spp has species in it
-    req(length(reactiveValuesToList(spp)) > 0)
+    req(length(reactiveValuesToList(spp)) > 0, occs())
     occs() %>%
       dplyr::mutate(occID = as.numeric(occID),
                     longitude = round(as.numeric(longitude), digits = 2),
@@ -480,11 +480,6 @@ function(input, output, session) {
   output$envsPrint <- renderPrint({
     req(envs())
     envs()
-    # mins <- sapply(envs()@layers, function(x) x@data@min)
-    # maxs <- sapply(envs()@layers, function(x) x@data@max)
-    # names <- sapply(strsplit(names(envs()), '[.]'), function(x) x[-2])
-    # DT::datatable(data.frame(name=names, min=mins, max=maxs),
-    #               rownames = FALSE, options = list(pageLength = raster::nlayers(envs())))
   })
 
   ########################################### #
@@ -510,6 +505,8 @@ function(input, output, session) {
   observeEvent(input$goRemoveByID, {
     removeByID <- callModule(removeByID_MOD, 'c2_removeByID_uiID')
     removeByID()
+    # switch to Map tab
+    updateTabsetPanel(session, 'main', selected = 'Map')
   })
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -519,6 +516,8 @@ function(input, output, session) {
     req(input$map_draw_new_feature)
     selOccs <- callModule(selectOccs_MOD, 'c2_selOccs_uiID')
     selOccs()
+    # switch to Map tab
+    updateTabsetPanel(session, 'main', selected = 'Map')
   })
 
   # # # # # # # # # # # # # #
@@ -528,6 +527,8 @@ function(input, output, session) {
   observeEvent(input$goThinOccs, {
     thinOccs <- callModule(thinOccs_MOD, 'c2_thinOccs_uiID')
     thinOccs()
+    # switch to Map tab
+    updateTabsetPanel(session, 'main', selected = 'Map')
   })
 
   # # # # # # # # # # # # # # # # # #
@@ -1329,15 +1330,25 @@ function(input, output, session) {
   observeEvent(input$goUserSDM, {
     userSDM <- callModule(userSDM_MOD, 'ppdata_userSDM_uiID')
     userSDM()
+    # switch to Results tab
+    updateTabsetPanel(session, 'main', selected = 'Map')
   })
 
   # # # # # # # # # # # # # # # # # # # # #
-  # Module add user SDM prediction (**) ####
+  # Module upload post-proccessing rasters (**) ####
   # # # # # # # # # # # # # # # # # # # # #
 
   observeEvent(input$goPpRasters, {
     ppRasters <- callModule(ppRasters_MOD, 'ppdata_ppRasters_uiID')
     ppRasters()
+    # switch to Results tab
+    updateTabsetPanel(session, 'main', selected = 'Results')
+  })
+
+  # CONSOLE PRINT
+  output$ppRastersPrint <- renderPrint({
+    req(spp[[curSp()]]$postProc$rasters)
+    spp[[curSp()]]$postProc$rasters
   })
 
   ########################################### #
@@ -1345,7 +1356,7 @@ function(input, output, session) {
   ########################################### #
 
   # # # # # # # # # # # # # # # # # # # # #
-  # sub-module draw polygon add/remove on Map ####
+  # sub-module draw polygon add/remove on Map (**) ####
   # # # # # # # # # # # # # # # # # # # # #
   observeEvent(input$goDrawAddRem, {
     drawAddRem <- callModule(drawAddRem_MOD, 'mask_drawAddRem_uiID')
@@ -1353,11 +1364,19 @@ function(input, output, session) {
   })
 
   # # # # # # # # # # # # # # # # # # # # #
-  # sub-module draw polygon add/remove on Map ####
+  # sub-module do polygon add/remove on Map (**) ####
   # # # # # # # # # # # # # # # # # # # # #
   observeEvent(input$goDoAddRem, {
     doAddRem <- callModule(doAddRem_MOD, 'mask_doAddRem_uiID')
     doAddRem()
+  })
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # Module Data-driven (**) ####
+  # # # # # # # # # # # # # # # # # # # # #
+  observeEvent(input$goDataDriven, {
+    dataDriven <- callModule(dataDriven_MOD, 'mask_dataDriven_uiID')
+    dataDriven()
   })
 
   ########################################### #

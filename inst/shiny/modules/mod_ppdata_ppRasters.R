@@ -25,10 +25,7 @@ ppRasters_MOD <- function(input, output, session) {
     spp[[curSp()]]$postProc$rasters <- ppRasters
 
     # METADATA ####
-    # spp[[sp]]$rmm$data$environment$variableNames <- names(userEnvs)
-    # spp[[sp]]$rmm$data$environment$resolution <- raster::res(userEnvs)
-    # spp[[sp]]$rmm$data$environment$sources <- 'user'
-    # spp[[sp]]$rmm$wallaceSettings$userRasName <- input$userEnvs$name
+
   })
 }
 
