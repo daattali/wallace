@@ -12,10 +12,6 @@ ppRasters_MOD <- function(input, output, session) {
       shinyLogs %>% writeLog(type = 'error', "Upload some occs or userSDM (**).")
       return()
     }
-    if (is.null(input$ppRasters)) {
-      shinyLogs %>% writeLog(type = 'error', "Raster files not uploaded.")
-      return()
-    }
 
     ppRasters <- ppdata_rasters(rasPath = input$ppRasters$datapath,
                                 rasName = input$ppRasters$name,

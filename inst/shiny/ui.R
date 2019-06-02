@@ -566,11 +566,11 @@ tagList(
             ),
             conditionalPanel(
               "input.maskSel == 'dataDrivenMask'",
-              uiTop(dataDriven_INFO),
-              dataDriven_UI('mask_dataDriven_uiID'),
-              actionButton("goDataDriven", "Mask (**)"),
+              uiTop(dataAnnotate_INFO),
+              dataAnnotate_UI('mask_dataAnnotate_uiID'),
+              actionButton("goDataAnnotate", "Annotate (**)"),
               HTML('<hr>'),
-              uiBottom(dataDriven_INFO)
+              uiBottom(dataAnnotate_INFO)
             )
           ),
           # SESSION CODE ####

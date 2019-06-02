@@ -331,8 +331,14 @@ function(input, output, session) {
       dplyr::mutate(occID = as.numeric(occID),
                     longitude = round(as.numeric(longitude), digits = 2),
                     latitude = round(as.numeric(latitude), digits = 2)) %>%
-      dplyr::select(-pop) %>%
-      dplyr::arrange(occID)
+      dplyr::select(-pop)
+    # arrange by drivenValue if exists
+    if (!is.null(spp[[curSp()]]$postProc$occs)) {
+      occs() %>% dplyr::arrange(drivenValue)
+    } else{
+      occs() %>% dplyr::arrange(occID)
+    }
+
   }, rownames = FALSE, options = list(scrollX = TRUE))
 
   # DOWNLOAD: current species occurrence data table
@@ -1374,10 +1380,33 @@ function(input, output, session) {
   # # # # # # # # # # # # # # # # # # # # #
   # Module Data-driven (**) ####
   # # # # # # # # # # # # # # # # # # # # #
-  observeEvent(input$goDataDriven, {
-    dataDriven <- callModule(dataDriven_MOD, 'mask_dataDriven_uiID')
-    dataDriven()
+  observeEvent(input$goDataAnnotate, {
+    dataAnnotate <- callModule(dataAnnotate_MOD, 'mask_dataAnnotate_uiID')
+    dataAnnotate()
+    # switch to Results tab
+    updateTabsetPanel(session, 'main', selected = 'Table')
   })
+
+  # # # # # # # # # # # # # # # # # #
+  # Post-processing: other controls ####
+  # # # # # # # # # # # # # # # # # #
+
+  # ui that populates with the names of environmental predictors used
+  output$curPpRastersUI <- renderUI({
+    req(curSp(), spp[[curSp()]]$postProc$rasters)
+    if(!is.null(spp[[curSp()]]$postProc$rasters)) {
+      n <- c(names(spp[[curSp()]]$postProc$rasters))
+    } else {
+      n <- NULL
+    }
+    ppRastersNameList <- setNames(as.list(n), n)
+    shinyWidgets::pickerInput("selDrivenRaster",
+                              label = "Select rasters",
+                              choices = ppRastersNameList,
+                              multiple = TRUE)
+  })
+
+  selDrivenRaster <- reactive(input$selDrivenRaster)
 
   ########################################### #
   ### RMARKDOWN FUNCTIONALITY ####
