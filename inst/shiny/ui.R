@@ -9,14 +9,14 @@ tagList(
     tabPanel("Process Occs", value = 'poccs'),
     tabPanel("Process Envs", value = 'penvs'),
     # tabPanel("Sampling", value='samp'),
-    tabPanel("Env Space", value = 'espace'),
+    # tabPanel("Env Space", value = 'espace'),
     tabPanel("Partition Occs", value = 'part'),
     tabPanel("Model", value = 'model'),
     tabPanel("Visualize", value = 'vis'),
     tabPanel("Project", value = 'proj'),
     tabPanel("Post-Data(**)", value = 'ppdata'),
     tabPanel("Post-processing", value = 'mask'),
-    tabPanel("Session Code", value = 'rmd'),
+    # tabPanel("Session Code", value = 'rmd'),
 
     fluidRow(
       column(
@@ -41,7 +41,7 @@ tagList(
             radioButtons(
               "occsSel", "Modules Available:",
               choices = list("Query Database (Present)" = 'dbOccs',
-                             "Query Database (Paleo)" = 'pdbOccs',
+                             # "Query Database (Paleo)" = 'pdbOccs',
                              "User-specified" = 'userOccs'),
               selected = 'dbOccs'
             ),
@@ -87,7 +87,7 @@ tagList(
             radioButtons(
               "envsSel", "Modules Available:",
               choices = list("WorldClim Bioclims" = 'wcbc',
-                             "ecoClimate"= 'ecoClimate',
+                             # "ecoClimate"= 'ecoClimate',
                              "User-specified" = 'userEnvs')
             ),
             tags$hr(),
@@ -369,7 +369,10 @@ tagList(
             h4("Build and Evaluate Niche Model"),
             radioButtons(
               "modelSel", "Modules Available:",
-              choices = list("BIOCLIM", "Maxent", "GAM"),
+              choices = list("BIOCLIM",
+                             "Maxent" #,
+                             # "GAM"
+                             ),
               selected = "Maxent" # Check default (no selected)
             ),
             tags$hr(),
