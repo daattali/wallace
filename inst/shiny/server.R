@@ -189,7 +189,8 @@ function(input, output, session) {
                 "projTime" = projectTime_MAP,
                 "mess" = envSimilarity_MAP,
                 "addRemMask" = addRem_MAP,
-                "userSDM" = userSDM_MAP)
+                "userSDM" = userSDM_MAP,
+                "dataDrivenMask" = userSDM_MAP)
     req(f)
     map %>% f(session)
   })
@@ -214,6 +215,7 @@ function(input, output, session) {
   shinyjs::disable("dlPred")
   shinyjs::disable("dlProj")
   shinyjs::disable("dlMess")
+  shinyjs::disable("dlMask")
   shinyjs::disable("goDoAddRem")
   # shinyjs::disable("dlRMD")
 
@@ -241,6 +243,7 @@ function(input, output, session) {
     shinyjs::toggleState("dlPred", !is.null(spp[[curSp()]]$visualization$occPredVals))
     shinyjs::toggleState("dlProj", !is.null(spp[[curSp()]]$project$pjEnvs))
     shinyjs::toggleState("dlMess", !is.null(spp[[curSp()]]$project$messVals))
+    shinyjs::toggleState("dlMask", !is.null(spp[[curSp()]]$postProc$prediction))
     shinyjs::toggleState("goDoAddRem", length(spp[[curSp()]]$mask$polyAddRem) >
                            length(spp[[curSp()]]$mask$removePoly))
     # shinyjs::toggleState("dlWhatever", !is.null(spp[[curSp()]]$whatever))
@@ -331,14 +334,8 @@ function(input, output, session) {
       dplyr::mutate(occID = as.numeric(occID),
                     longitude = round(as.numeric(longitude), digits = 2),
                     latitude = round(as.numeric(latitude), digits = 2)) %>%
-      dplyr::select(-pop)
-    # arrange by drivenValue if exists
-    if (!is.null(spp[[curSp()]]$postProc$occs)) {
-      occs() %>% dplyr::arrange(drivenValue)
-    } else{
-      occs() %>% dplyr::arrange(occID)
-    }
-
+      dplyr::select(-pop) %>%
+      dplyr::arrange(occID)
   }, rownames = FALSE, options = list(scrollX = TRUE))
 
   # DOWNLOAD: current species occurrence data table
@@ -1387,6 +1384,13 @@ function(input, output, session) {
     updateTabsetPanel(session, 'main', selected = 'Table')
   })
 
+  observeEvent(input$goDoDataDriven, {
+    doDataDriven <- callModule(doDataDriven_MOD, 'mask_doDataDriven_uiID')
+    doDataDriven()
+    # switch to Results tab
+    updateTabsetPanel(session, 'main', selected = 'Map')
+  })
+
   # # # # # # # # # # # # # # # # # #
   # Post-processing: other controls ####
   # # # # # # # # # # # # # # # # # #
@@ -1403,10 +1407,70 @@ function(input, output, session) {
     shinyWidgets::pickerInput("selDrivenRaster",
                               label = "Select rasters",
                               choices = ppRastersNameList,
-                              multiple = TRUE)
+                              multiple = TRUE,
+                              selected = ppRastersNameList)
   })
 
   selDrivenRaster <- reactive(input$selDrivenRaster)
+
+  # ui that populates with the names of environmental predictors used
+  output$curMaskRasterUI <- renderUI({
+    req(curSp(),
+        spp[[curSp()]]$postProc$rasters,
+        spp[[curSp()]]$postProc$occs)
+    if(!is.null(spp[[curSp()]]$postProc$rasters)) {
+      n <- c(names(spp[[curSp()]]$postProc$rasters))
+    } else {
+      n <- NULL
+    }
+    ppRastersNameList <- setNames(as.list(n), n)
+    shinyWidgets::pickerInput("selMaskRaster",
+                              label = "Select rasters",
+                              choices = ppRastersNameList,
+                              multiple = FALSE,
+                              selected = ppRastersNameList)
+  })
+
+  selMaskRaster <- reactive(input$selMaskRaster)
+
+  # Reset Projection Extent button functionality
+  observeEvent(input$goResetPostPred, {
+    spp[[curSp()]]$postProc$prediction <- spp[[curSp()]]$postProc$OrigPred
+    spp[[curSp()]]$mask$polyAddRem <- NULL
+    spp[[curSp()]]$mask$removePoly<- NULL
+    shinyLogs %>% writeLog("Reset prediction. (**)")
+  })
+
+  # download for model predictions (restricted to background extent)
+  output$dlMask <- downloadHandler(
+    filename = function() {
+      ext <- switch(input$maskFileType, raster = 'zip', ascii = 'asc',
+                    GTiff = 'tif')
+      paste0(curSp(), '_mask.', ext)
+    },
+    content = function(file) {
+      if(require(rgdal)) {
+        if (input$maskFileType == 'raster') {
+          fileName <- curSp()
+          tmpdir <- tempdir()
+          raster::writeRaster(spp[[curSp()]]$postProc$prediction,
+                              file.path(tmpdir, fileName),
+                              format = input$maskFileType, overwrite = TRUE)
+          owd <- setwd(tmpdir)
+          fs <- paste0(fileName, c('.grd', '.gri'))
+          zip::zip(zipfile = file, files = fs)
+          setwd(owd)
+        } else {
+          r <- raster::writeRaster(spp[[curSp()]]$postProc$prediction, file,
+                                   format = input$maskFileType,
+                                   overwrite = TRUE)
+          file.rename(r@file@name, file)
+        }
+      } else {
+        shinyLogs %>% writeLog("Please install the rgdal package before downloading rasters.")
+      }
+    }
+  )
 
   ########################################### #
   ### RMARKDOWN FUNCTIONALITY ####

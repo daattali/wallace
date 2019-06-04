@@ -49,6 +49,7 @@ queryDb_MOD <- function(input, output, session, targetGroup = FALSE) {
                            shinyLogs = shinyLogs)
                            # input$doCitations, input$gbifUser, input$gbifEmail,
                            # input$gbifPW, shinyLogs)
+
     req(occsList)
 
     if(targetGroup == TRUE) {

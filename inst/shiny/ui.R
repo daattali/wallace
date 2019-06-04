@@ -560,9 +560,7 @@ tagList(
               actionButton("goDrawAddRem", "Select"),
               br(),
               doAddRem_UI('mask_doAddRem_uiID'),
-              actionButton("goDoAddRem", "Apply expert knowledge"),
-              HTML('<hr>'),
-              uiBottom(addRem_INFO)
+              actionButton("goDoAddRem", "Apply expert knowledge")
             ),
             conditionalPanel(
               "input.maskSel == 'dataDrivenMask'",
@@ -570,6 +568,24 @@ tagList(
               dataAnnotate_UI('mask_dataAnnotate_uiID'),
               actionButton("goDataAnnotate", "Annotate (**)"),
               HTML('<hr>'),
+              doDataDriven_UI('mask_doDataDriven_uiID'),
+              actionButton("goDoDataDriven", "Mask (**)")
+            ),
+            br(),
+            actionButton("goResetPostPred", "Reset", class = 'butResPostPred'),
+            tags$head(tags$style(".butResPostPred {background-color: #C51E10;
+                               color: white;
+                               padding: 5px 5px;
+                               border: none;}
+                               .butResPostPred:hover {background-color: #830D03;
+                               color: white;}")),
+            HTML('<hr>'),
+            conditionalPanel(
+              "input.maskSel == 'addRemMask'",
+              uiBottom(addRem_INFO)
+            ),
+            conditionalPanel(
+              "input.maskSel == 'dataDrivenMask'",
               uiBottom(dataAnnotate_INFO)
             )
           ),
@@ -824,6 +840,19 @@ tagList(
                 br(),
                 fluidRow(
                   column(3, h5("No download data available in this component"))
+                )
+              ),
+              conditionalPanel(
+                "input.tabs == 'mask'",
+                br(),
+                fluidRow(
+                  column(3, h5("Download post-prediction (Select download file type)(**)")),
+                  column(2, selectInput('maskFileType',
+                                        label = NULL,
+                                        choices = list("GeoTIFF" = 'GTiff',
+                                                       "GRD" = 'raster',
+                                                       "ASCII" = 'ascii'))),
+                  column(2, downloadButton('dlMask', "post-prediction file (**)"))
                 )
               )
             )

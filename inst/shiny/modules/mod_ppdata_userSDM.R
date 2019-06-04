@@ -32,6 +32,7 @@ userSDM_MOD <- function(input, output, session) {
       extPoly <- as(e, 'SpatialPolygons')
       # LOAD INTO SPP ####
       spp[[newSppName]]$postProc$prediction <- userSDMs
+      spp[[newSppName]]$postProc$OrigPred <- userSDMs
       spp[[newSppName]]$procEnvs$bgExt <- extPoly
 
       # METADATA ####

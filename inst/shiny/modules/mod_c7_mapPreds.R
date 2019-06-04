@@ -143,9 +143,11 @@ mapPreds_MOD <- function(input, output, session) {
     if(input$threshold != 'none') {
       spp[[curSp()]]$rmm$output$prediction$thresholdSet <- thr.sel
       spp[[curSp()]]$postProc$prediction <- predSel.thr
+      spp[[curSp()]]$postProc$OrigPred <- predSel.thr
     } else {
       spp[[curSp()]]$rmm$output$prediction$thresholdSet <- NULL
       spp[[curSp()]]$postProc$prediction <- predSel.thr
+      spp[[curSp()]]$postProc$OrigPred <- predSel.thr
     }
     spp[[curSp()]]$rmm$output$prediction$notes <- predType
 

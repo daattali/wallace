@@ -4,18 +4,18 @@
 \alias{mask_dataAnnotate}
 \title{mask_dataAnnotate}
 \usage{
-mask_dataAnnotate(occs, envList, envExtent, envDates, shinyLogs = NULL)
+mask_dataAnnotate(occs, env, envDates, shinyLogs = NULL)
 }
 \arguments{
 \item{occs}{x}
 
-\item{envList}{x}
-
-\item{envExtent}{x}
-
 \item{envDates}{x}
 
 \item{shinyLogs}{x}
+
+\item{envList}{x}
+
+\item{envExtent}{x}
 }
 \description{
 ..

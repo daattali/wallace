@@ -42,5 +42,5 @@ mask_dataAnnotate <- function(occs, env, envDates, shinyLogs = NULL) {
                                          envDates = envDates,
                                          dateScale = "year")
   as.data.frame(annotateValues)
-  return(annotateValues$env)
+  return(annotateValues$env[order(as.numeric(row.names(annotateValues)))])
 }

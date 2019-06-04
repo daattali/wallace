@@ -33,9 +33,19 @@ dataAnnotate_MOD <- function(input, output, session) {
                                       env = env,
                                       envDates = dates,
                                       shinyLogs)
-    occsEnvs <- cbind.data.frame(occs()[, c(5, 1:4)],
-                                 drivenValue = dataAnnotate,
-                                 occs()[, 6:13])
+    # subset by key columns and make id and popup columns
+    cols <- c("occID", "scientific_name", "longitude", "latitude", "year",
+              "drivenValue", "country", "state_province", "locality", "record_type",
+              "catalog_number", "institution_code", "elevation", "uncertainty",
+              "pop")
+    occsEnvs <- occs()
+    if (!('drivenValue' %in% names(occsEnvs))) {
+      occsEnvs <- cbind.data.frame(occsEnvs, drivenValue = dataAnnotate)
+      occsEnvs <- occsEnvs[, cols]
+    } else {
+      occsEnvs[, 'drivenValue'] <- dataAnnotate
+    }
+
     # LOAD INTO SPP ####
     spp[[curSp()]]$postProc$occs <- occsEnvs
     spp[[curSp()]]$occs <- occsEnvs
