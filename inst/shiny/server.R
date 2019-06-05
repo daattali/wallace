@@ -1369,7 +1369,7 @@ function(input, output, session) {
   })
 
   # # # # # # # # # # # # # # # # # # # # #
-  # sub-module do polygon add/remove on Map (**) ####
+  # sub-module do polygon add/remove on Map ####
   # # # # # # # # # # # # # # # # # # # # #
   observeEvent(input$goDoAddRem, {
     doAddRem <- callModule(doAddRem_MOD, 'mask_doAddRem_uiID')

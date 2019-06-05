@@ -36,7 +36,7 @@ tempExtract_MOD <- function(input, output, session) {
                                     shinyLogs)
 
     shinyLogs %>%
-      writeLog("Values were extracted (extractedValue column in Table) (**)")
+      writeLog("Values were extracted (**)")
 
     # subset by key columns and make id and popup columns
     cols <- c("occID", "scientific_name", "longitude", "latitude", "year",

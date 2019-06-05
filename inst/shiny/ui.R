@@ -137,8 +137,8 @@ tagList(
               #                "Select Occurrences On Map" = 'selOccs',
               choices = list("Select Occurrences On Map" = 'selOccs',
                              "Remove Occurrences By ID" = 'remID',
-                             "Spatial Thin" = 'spthin'),
-              selected = "spthin" # Check default (no selected)
+                             "Spatial Thin" = 'spthin') #,
+              # selected = "spthin" # Check default (no selected)
             ),
             tags$hr(),
             # conditionalPanel("input.procOccsSel == 'profOccs'",
@@ -340,8 +340,8 @@ tagList(
             radioButtons(
               "partSel", "Modules Available:",
               choices = list("Non-spatial Partition" = 'nsp',
-                             "Spatial Partition" = 'sp'),
-              selected = 'sp' # Check default (no selected)
+                             "Spatial Partition" = 'sp')#,
+              # selected = 'sp' # Check default (no selected)
             ),
             tags$hr(),
             conditionalPanel(
@@ -373,8 +373,8 @@ tagList(
               choices = list("BIOCLIM",
                              "Maxent" #,
                              # "GAM"
-                             ),
-              selected = "Maxent" # Check default (no selected)
+                             )#,
+              # selected = "Maxent" # Check default (no selected)
             ),
             tags$hr(),
             conditionalPanel(
@@ -422,8 +422,8 @@ tagList(
               choices = list("BIOCLIM Envelope Plots" = 'bioclimPlot',
                              "Maxent Evaluation Plots" = 'maxentEval',
                              "Plot Response Curves" = 'response',
-                             "Map Prediction" = 'mapPreds'),
-              selected = 'mapPreds' # Check default (no selected param)
+                             "Map Prediction" = 'mapPreds')#,
+              # selected = 'mapPreds' # Check default (no selected param)
             ),
             tags$hr(),
             conditionalPanel(
@@ -524,7 +524,7 @@ tagList(
           # POST PROCESSING DATA ####
           conditionalPanel(
             "input.tabs == 'ppdata'",
-            h4("Post-processing data (**)"),
+            h4("Post-processing data"),
             radioButtons("ppdataSel", "Modules Available:",
                          choices =
                            list("User-provided distribution map" = 'userSDM',
@@ -535,7 +535,7 @@ tagList(
               "input.ppdataSel == 'ppRasters'",
               uiTop(ppRasters_INFO),
               ppRasters_UI('ppdata_ppRasters_uiID'),
-              actionButton("goPpRasters", "Load Rasters(**)"),
+              actionButton("goPpRasters", "Load"),
               HTML('<hr>'),
               uiBottom(ppRasters_INFO)
             ),
@@ -581,7 +581,7 @@ tagList(
               div("Masking by extracted environmental values", id = "stepText"),
               br(), br(),
               doTempExtract_UI('mask_doTempExtract_uiID'),
-              actionButton("goDoTempExtract", "Mask (**)")
+              actionButton("goDoTempExtract", "Mask")
             ),
             br(),
             actionButton("goResetPostPred", "Reset", class = 'butResPostPred'),
@@ -864,7 +864,7 @@ tagList(
                                         choices = list("GeoTIFF" = 'GTiff',
                                                        "GRD" = 'raster',
                                                        "ASCII" = 'ascii'))),
-                  column(2, downloadButton('dlMask', "post-prediction file (**)"))
+                  column(2, downloadButton('dlMask', "Post-prediction file (**)"))
                 )
               )
             )

@@ -6,22 +6,21 @@ partitionSpat_UI <- function(id) {
                 choices = list("None selected" = '',
                                "Block (k = 4)" = "block",
                                "Checkerboard 1 (k = 2)" = "cb1",
-                               "Checkerboard 2 (k = 4)" = "cb2"), 
-                selected = 'block'), # Check default (no selected)
-    conditionalPanel(sprintf("input['%1$s'] == 'cb1' | input['%1$s'] == 'cb2'", 
+                               "Checkerboard 2 (k = 4)" = "cb2")), # Check default (no selected)
+    conditionalPanel(sprintf("input['%1$s'] == 'cb1' | input['%1$s'] == 'cb2'",
                              ns("partitionSpatSel")),
-                     numericInput(ns("aggFact"), label = "Aggregation Factor", 
+                     numericInput(ns("aggFact"), label = "Aggregation Factor",
                                   value = 2, min = 2)),
-    checkboxInput(ns("batch"), label = strong("Batch"), value = T) # Check default (value = FALSE)
+    checkboxInput(ns("batch"), label = strong("Batch"), value = F) # Check default (value = FALSE)
   )
 }
 
 partitionSpat_MOD <- function(input, output, session) {
   reactive({
-    
+
     # loop over all species if batch is on
     if(input$batch == TRUE) spLoop <- allSp() else spLoop <- curSp()
-    
+
     # PROCESSING ####
     for(sp in spLoop) {
       if (is.null(bgMask())) {
@@ -29,17 +28,17 @@ partitionSpat_MOD <- function(input, output, session) {
                                ", mask your environmental variables by your background extent.")
         return()
       }
-      
+
       # FUNCTION CALL ####
-      group.data <- c5_partitionOccs(spp[[sp]]$occs, spp[[sp]]$bg, input$partitionSpatSel, 
-                                     kfolds = NULL, bgMask = spp[[sp]]$procEnvs$bgMask, 
+      group.data <- c5_partitionOccs(spp[[sp]]$occs, spp[[sp]]$bg, input$partitionSpatSel,
+                                     kfolds = NULL, bgMask = spp[[sp]]$procEnvs$bgMask,
                                      aggFact = input$aggFact, shinyLogs)
       req(group.data)
-      
+
       # LOAD INTO SPP ####
       spp[[sp]]$occs$partition <- group.data$occ.grp
       spp[[sp]]$bg$partition <- group.data$bg.grp
-      
+
       # METADATA ####
       if(input$partitionSpatSel == 'block') {
         spp[[sp]]$rmm$model$partition$numberFolds <- 4
@@ -55,7 +54,7 @@ partitionSpat_MOD <- function(input, output, session) {
         spp[[sp]]$rmm$model$partition$notes <- paste('aggregation factor =', input$aggFact)
       }
     }
-    
+
   })
 }
 

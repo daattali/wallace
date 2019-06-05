@@ -56,13 +56,14 @@ drawAddRem_MOD <- function(input, output, session) {
         "The polygon is outside the background extent. Please specify a new polygon. (**)"
       )
       return()
-    } else {
-      if (input$addRemSel == 'maskDrawAddRem') {
-        shinyLogs %>% writeLog("The draw polygon is ready for action (add or remove) (**)")
-      } else if (input$addRemSel == 'maskUserAddRem') {
-        shinyLogs %>% writeLog("The user polygon is ready for action (add or remove) (**)")
-      }
+    }
 
+    if (is.null(addRemPoly)) {
+      shinyLogs %>% writeLog(
+        type = 'warning', "No polygon uploaded (**)"
+      )
+      return()
+    } else {
       # LOAD INTO SPP ####
       if(is.null(spp[[curSp()]]$mask$polyAddRem)) {
         spp[[curSp()]]$mask$polyAddRem <- list()
@@ -128,21 +129,23 @@ addRem_MAP <- function(map, session) {
                      method = "ngb")
   }
   # If there is a new polygon
-  req(spp[[curSp()]]$mask$polyAddRem)
-  polyAddRem <- spp[[curSp()]]$mask$polyAddRem
-  xy <- ggplot2::fortify(polyAddRem[[length(polyAddRem)]])
-  if (length(polyAddRem) == 1) {
-    map %>%
-      addPolygons(lng = xy[,1], lat = xy[,2],
-                  weight = 4, color = "gray", group = 'maskShp')
-  } else {
-    map %>% clearGroup('maskShp') %>%
-      addPolygons(lng = xy[,1], lat = xy[,2],
-                  weight = 4, color = "gray", group = 'maskShp') %>%
-      removeImage(layerId = 'postPred') %>%
-      addRasterImage(spp[[curSp()]]$postProc$prediction,
-                     colors = c('gray', 'purple'), opacity = 0.7, group = 'mask',
-                     layerId = 'postPred', method = "ngb")
+  if (length(spp[[curSp()]]$mask$polyAddRem) > 0) {
+    req(length(spp[[curSp()]]$mask$polyAddRem))
+    polyAddRem <- spp[[curSp()]]$mask$polyAddRem
+    xy <- ggplot2::fortify(polyAddRem[[length(polyAddRem)]])
+    if (length(polyAddRem) == 1) {
+      map %>%
+        addPolygons(lng = xy[,1], lat = xy[,2],
+                    weight = 4, color = "gray", group = 'maskShp')
+    } else {
+      map %>% clearGroup('maskShp') %>%
+        addPolygons(lng = xy[,1], lat = xy[,2],
+                    weight = 4, color = "gray", group = 'maskShp') %>%
+        removeImage(layerId = 'postPred') %>%
+        addRasterImage(spp[[curSp()]]$postProc$prediction,
+                       colors = c('gray', 'purple'), opacity = 0.7, group = 'mask',
+                       layerId = 'postPred', method = "ngb")
+    }
   }
 }
 

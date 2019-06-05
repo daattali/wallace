@@ -10,35 +10,34 @@ runMaxent_UI <- function(id) {
     "key: ", strong("L"), "inear, ", strong("Q"), "uadratic, ", strong("H"), "inge, ", strong("P"), "roduct, ", strong("T"), "hreshold",
     tags$div(title='Feature combinations to be explored. Features are constructed using different relationships within and among the environmental predictors, and are used to constrain the computed probability distribution. In short, more features = more potential model complexity.',
              checkboxGroupInput(ns("fcs"), label='',
-                                choices = list("L", "LQ", "H", "LQH", "LQHP", "LQHPT"), 
-                                inline = TRUE, 
-                                selected = c("L", "LQ"))), # Check default (no selected param)
+                                choices = list("L", "LQ", "H", "LQH", "LQHP", "LQHPT"),
+                                inline = TRUE)), # Check default (no selected param)
     strong("Select regularization multipliers "), strong(em("(penalty against complexity)")),
     tags$div(title='Range of regularization multipliers to explore. Greater values of the regularization multiplier lead to increased penalty against overly complex and/or overfit models. A value of 0 results in no regularization.',
              sliderInput(ns("rms"), label = "",
-                         min = 0.5, max = 10, step=0.5, value = c(1, 2))),
+                         min = 0.5, max = 10, step=  0.5, value = c(0.5, 1))),
     tags$div(title='Value used to step through regularization multiplier range (e.g. range of 1-3 with step 0.5 results in [1, 1.5, 2, 2.5, 3]).',
              numericInput(ns("rmsStep"), label = "Multiplier step value", value = 1)),
     strong("Clamping?"), tags$div(title = 'Clamp model predictions?',
-                                  selectInput(ns("clamp"), label='', 
+                                  selectInput(ns("clamp"), label='',
                                               choices = list("", "TRUE", "FALSE"))),
-    checkboxInput(ns("batch"), label = strong("Batch"), value = T) # Check default (value = FALSE)
+    checkboxInput(ns("batch"), label = strong("Batch"), value = F) # Check default (value = FALSE)
   )
 }
 
 runMaxent_MOD <- function(input, output, session) {
   observe({
     if(input$algMaxent == "maxnet") {
-      updateSelectInput(session, "clamp", selected = "TRUE") # Check default (selected = "")
+      updateSelectInput(session, "clamp", selected = "") # Check default (selected = "")
       shinyjs::enable("clamp")
     } else {
-      updateSelectInput(session, "clamp", selected = "TRUE")  
+      updateSelectInput(session, "clamp", selected = "")
       shinyjs::disable("clamp")
     }
   })
-  
+
   reactive({
-    
+
     if(is.null(input$fcs)) {
       shinyLogs %>% writeLog(type = 'error', "No feature classes selected.")
       return()
@@ -47,10 +46,10 @@ runMaxent_MOD <- function(input, output, session) {
       shinyLogs %>% writeLog(type = 'error', "Please specify clamping setting.")
       return()
     }
-    
+
     # loop over all species if batch is on
     if(input$batch == TRUE) spLoop <- allSp() else spLoop <- curSp()
-    
+
     # PROCESSING ####
     for(sp in spLoop) {
       # ERRORS ####
@@ -61,22 +60,22 @@ runMaxent_MOD <- function(input, output, session) {
         return()
       }
       # FUNCTION CALL ####
-      res.maxent <- runMaxent(spp[[sp]]$occs, 
-                              spp[[sp]]$bg, 
+      res.maxent <- runMaxent(spp[[sp]]$occs,
+                              spp[[sp]]$bg,
                               spp[[sp]]$occs$partition,
                               spp[[sp]]$bg$partition,
-                              spp[[sp]]$procEnvs$bgMask, 
-                              input$rms, 
-                              input$rmsStep, 
-                              input$fcs, 
+                              spp[[sp]]$procEnvs$bgMask,
+                              input$rms,
+                              input$rmsStep,
+                              input$fcs,
                               input$clamp,
                               input$algMaxent,
                               shinyLogs)
       req(res.maxent)
-      
+
       # LOAD INTO SPP ####
       spp[[sp]]$evalOut <- res.maxent
-      
+
       # METADATA ####
       spp[[sp]]$rmm$model$algorithm <- input$algMaxent
       spp[[sp]]$rmm$model$maxent$featureSet <- input$fcs
@@ -90,7 +89,7 @@ runMaxent_MOD <- function(input, output, session) {
         ver <- paste("maxnet", packageVersion('maxnet'))
       }
       spp[[sp]]$rmm$model$maxent$algorithmNotes <- ver
-      
+
     }
   })
 }
