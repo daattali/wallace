@@ -190,7 +190,7 @@ function(input, output, session) {
                 "mess" = envSimilarity_MAP,
                 "addRemMask" = addRem_MAP,
                 "userSDM" = userSDM_MAP,
-                "dataDrivenMask" = userSDM_MAP)
+                "tempRasMask" = userSDM_MAP)
     req(f)
     map %>% f(session)
   })
@@ -1364,6 +1364,8 @@ function(input, output, session) {
   observeEvent(input$goDrawAddRem, {
     drawAddRem <- callModule(drawAddRem_MOD, 'mask_drawAddRem_uiID')
     drawAddRem()
+    # switch to Results tab
+    updateTabsetPanel(session, 'main', selected = 'Map')
   })
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -1372,21 +1374,23 @@ function(input, output, session) {
   observeEvent(input$goDoAddRem, {
     doAddRem <- callModule(doAddRem_MOD, 'mask_doAddRem_uiID')
     doAddRem()
+    # switch to Results tab
+    updateTabsetPanel(session, 'main', selected = 'Map')
   })
 
   # # # # # # # # # # # # # # # # # # # # #
-  # Module Data-driven (**) ####
+  # Module Temporal Extrac ####
   # # # # # # # # # # # # # # # # # # # # #
-  observeEvent(input$goDataAnnotate, {
-    dataAnnotate <- callModule(dataAnnotate_MOD, 'mask_dataAnnotate_uiID')
-    dataAnnotate()
+  observeEvent(input$goTempExtract, {
+    tempExtract <- callModule(tempExtract_MOD, 'mask_tempExtract_uiID')
+    tempExtract()
     # switch to Results tab
     updateTabsetPanel(session, 'main', selected = 'Table')
   })
 
-  observeEvent(input$goDoDataDriven, {
-    doDataDriven <- callModule(doDataDriven_MOD, 'mask_doDataDriven_uiID')
-    doDataDriven()
+  observeEvent(input$goDoTempExtract, {
+    doTempExtract <- callModule(doTempExtract_MOD, 'mask_doTempExtract_uiID')
+    doTempExtract()
     # switch to Results tab
     updateTabsetPanel(session, 'main', selected = 'Map')
   })
@@ -1404,14 +1408,14 @@ function(input, output, session) {
       n <- NULL
     }
     ppRastersNameList <- setNames(as.list(n), n)
-    shinyWidgets::pickerInput("selDrivenRaster",
-                              label = "Select rasters",
+    shinyWidgets::pickerInput("selTempRaster",
+                              label = "Select/deselect environmental rasters",
                               choices = ppRastersNameList,
                               multiple = TRUE,
                               selected = ppRastersNameList)
   })
 
-  selDrivenRaster <- reactive(input$selDrivenRaster)
+  selTempRaster <- reactive(input$selTempRaster)
 
   # ui that populates with the names of environmental predictors used
   output$curMaskRasterUI <- renderUI({
@@ -1424,11 +1428,12 @@ function(input, output, session) {
       n <- NULL
     }
     ppRastersNameList <- setNames(as.list(n), n)
-    shinyWidgets::pickerInput("selMaskRaster",
-                              label = "Select rasters",
-                              choices = ppRastersNameList,
-                              multiple = FALSE,
-                              selected = ppRastersNameList)
+    shinyWidgets::pickerInput(
+      "selMaskRaster",
+      label = "Select environmental raster to use for masking",
+      choices = ppRastersNameList,
+      multiple = FALSE,
+      selected = ppRastersNameList)
   })
 
   selMaskRaster <- reactive(input$selMaskRaster)

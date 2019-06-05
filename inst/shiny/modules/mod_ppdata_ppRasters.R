@@ -1,7 +1,9 @@
 ppRasters_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    fileInput(ns("ppRasters"), label = "Upload post-processed rasters", multiple = TRUE)
+    fileInput(ns("ppRasters"),
+              label = "Upload environmental rasters for masking distribution map",
+              multiple = TRUE)
   )
 }
 

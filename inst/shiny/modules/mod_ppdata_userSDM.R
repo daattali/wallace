@@ -1,7 +1,7 @@
 userSDM_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    fileInput(ns("userSDMs"), label = "Upload SDM predictions (**)",
+    fileInput(ns("userSDMs"), label = "Upload distribution map",
       multiple = TRUE, accept = c(".tif", ".asc"))
   )
 }
@@ -42,7 +42,6 @@ userSDM_MOD <- function(input, output, session) {
 }
 
 userSDM_MAP <- function(map, session) {
-  updateTabsetPanel(session, 'main', selected = 'Map')
   req(spp[[curSp()]]$postProc$prediction, spp[[curSp()]]$procEnvs$bgExt)
   # Zoom
   userRaster <- spp[[curSp()]]$postProc$prediction
@@ -65,8 +64,8 @@ userSDM_MAP <- function(map, session) {
       removeImage(layerId = 'postPred') %>%
       removeControl(layerId = 'expert') %>%
       addLegend("bottomright", colors = c('gray', 'purple'),
-                      title = "Suitability<br>(User) (**)",
-                      labels = c("Absence (**)", "Presence (**)"),
+                      title = "Distribution<br>map",
+                      labels = c("Unsuitable", "Suitable"),
                       opacity = 1, layerId = 'expert') %>%
       addRasterImage(userRaster, colors = c('gray', 'purple'),
                      opacity = 0.7, group = 'mask', layerId = 'postPred',
@@ -89,6 +88,6 @@ userSDM_MAP <- function(map, session) {
 
 }
 
-userSDM_INFO <- infoGenerator(modName = "User-specified SDM prediction (**)",
+userSDM_INFO <- infoGenerator(modName = "User-provided distribution map",
                               modAuts = "Gonzalo E. Pinilla-Buitrago",
                               pkgName = "raster")

@@ -1,13 +1,14 @@
-dataAnnotate_UI <- function(id) {
+tempExtract_UI <- function(id) {
   ns <- NS(id)
   tagList(
     uiOutput("curPpRastersUI"),
     textInput(ns("yearInput"),
-              label = "Type years in the same order of the rasters selected in the previous step")
-  )
+              label = paste0("Type the years to be used for extracting ",
+                             "environmental data, separated by commas"))
+    )
 }
 
-dataAnnotate_MOD <- function(input, output, session) {
+tempExtract_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
     if (is.null(occs())) {
@@ -23,27 +24,31 @@ dataAnnotate_MOD <- function(input, output, session) {
       return()
     }
     # Prepare rasters
-    env <- raster::stack(spp[[curSp()]]$postProc$rasters[selDrivenRaster()])
+    env <- raster::stack(spp[[curSp()]]$postProc$rasters[selTempRaster()])
     # crop climate data to study region
     env <- raster::crop(env, spp[[curSp()]]$postProc$prediction)
     # Prepare year vector
     dates <- trimws(strsplit(input$yearInput, ",")[[1]])
     # FUNCTION CALL
-    dataAnnotate <- mask_dataAnnotate(occs = occs(),
-                                      env = env,
-                                      envDates = dates,
-                                      shinyLogs)
+    tempExtract <- mask_tempExtract(occs = occs(),
+                                    env = env,
+                                    envDates = dates,
+                                    shinyLogs)
+
+    shinyLogs %>%
+      writeLog("Values were extracted (extractedValue column in Table) (**)")
+
     # subset by key columns and make id and popup columns
     cols <- c("occID", "scientific_name", "longitude", "latitude", "year",
-              "drivenValue", "country", "state_province", "locality", "record_type",
+              "extractedValue", "country", "state_province", "locality", "record_type",
               "catalog_number", "institution_code", "elevation", "uncertainty",
               "pop")
     occsEnvs <- occs()
-    if (!('drivenValue' %in% names(occsEnvs))) {
-      occsEnvs <- cbind.data.frame(occsEnvs, drivenValue = dataAnnotate)
+    if (!('extractedValue' %in% names(occsEnvs))) {
+      occsEnvs <- cbind.data.frame(occsEnvs, extractedValue = tempExtract)
       occsEnvs <- occsEnvs[, cols]
     } else {
-      occsEnvs[, 'drivenValue'] <- dataAnnotate
+      occsEnvs[, 'extractedValue'] <- tempExtract
     }
 
     # LOAD INTO SPP ####
@@ -54,6 +59,6 @@ dataAnnotate_MOD <- function(input, output, session) {
   })
 }
 
-dataAnnotate_INFO <- infoGenerator(modName = "Masking by land cover",
-                                   modAuts = "Gonzalo E. Pinilla-Buitrago, Pete Galante",
-                                   pkgName = 'maskRangeR')
+tempExtract_INFO <- infoGenerator(modName = "Mask by environmental rasters",
+                                  modAuts = "Gonzalo E. Pinilla-Buitrago, Pete Galante",
+                                  pkgName = 'maskRangeR')

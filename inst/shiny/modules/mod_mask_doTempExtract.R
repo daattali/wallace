@@ -1,17 +1,18 @@
-doDataDriven_UI <- function(id) {
+doTempExtract_UI <- function(id) {
   ns <- NS(id)
   tagList(
+    uiOutput("curMaskRasterUI"),
+    p("Provide lower and/or upper bound values for masking"),
     splitLayout(
-      numericInput(ns('lowerInput'), label = "Lower bound value (**)",
+      numericInput(ns('lowerInput'), label = "Lower bound value",
                    value = NULL),
-      numericInput(ns('upperInput'), label = "Upper bound value (**)",
+      numericInput(ns('upperInput'), label = "Upper bound value",
                    value = NULL)
-      ),
-    uiOutput("curMaskRasterUI")
+      )
   )
 }
 
-doDataDriven_MOD <- function(input, output, session) {
+doTempExtract_MOD <- function(input, output, session) {
   reactive({
     # ERRORS ####
     if (is.null(spp[[curSp()]]$postProc$occs)) {
@@ -19,14 +20,16 @@ doDataDriven_MOD <- function(input, output, session) {
       return()
     }
     # FUNCTION CALL
-    doDataDriven <-
-      mask_doDataDriven(
+    doTempExtract <-
+      mask_doTempExtract(
         lowerInp = input$lowerInput, upperInp = input$upperInput,
         maskRaster = spp[[curSp()]]$postProc$rasters[[selMaskRaster()]],
         pred = spp[[curSp()]]$postProc$prediction, shinyLogs)
 
+    shinyLogs %>% writeLog("The prediction was masked (**)")
+
     # LOAD INTO SPP ####
-    spp[[curSp()]]$postProc$prediction <- doDataDriven
+    spp[[curSp()]]$postProc$prediction <- doTempExtract
 
     # METADATA ####
   })

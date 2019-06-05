@@ -1,5 +1,5 @@
 
-#' @title mask_doDataDriven
+#' @title mask_doTempExtract
 #' @description ..
 #'
 #' @details
@@ -28,7 +28,7 @@
 #' @export
 #'
 
-mask_doDataDriven <- function(lowerInp, upperInp,
+mask_doTempExtract <- function(lowerInp, upperInp,
                               maskRaster, pred, shinyLogs = NULL) {
   if (is.na(lowerInp) & is.na(upperInp)) {
     shinyLogs %>% writeLog(type = 'error', "Please, provide bound(s) (**)")

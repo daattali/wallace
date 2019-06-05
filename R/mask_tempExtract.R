@@ -1,5 +1,5 @@
 
-#' @title mask_dataAnnotate
+#' @title mask_tempExtract
 #' @description ..
 #'
 #' @details
@@ -28,7 +28,7 @@
 #' @export
 #'
 
-mask_dataAnnotate <- function(occs, env, envDates, shinyLogs = NULL) {
+mask_tempExtract <- function(occs, env, envDates, shinyLogs = NULL) {
   # this should be a formal date object of class "POSIXct" "POSIXt"
   envDates <- lubridate::parse_date_time(envDates, orders = c("Y", "Ym"))
 
@@ -37,10 +37,10 @@ mask_dataAnnotate <- function(occs, env, envDates, shinyLogs = NULL) {
   # convert to spatial object
   sp::coordinates(datedOccs) <- c('longitude','latitude')
   raster::projection(datedOccs) <- raster::projection(env)
-  annotateValues <- maskRangeR::annotate(datedOccs = datedOccs,
-                                         env = env,
-                                         envDates = envDates,
-                                         dateScale = "year")
-  as.data.frame(annotateValues)
-  return(annotateValues$env[order(as.numeric(row.names(annotateValues)))])
+  tempExtractValues <- maskRangeR::annotate(datedOccs = datedOccs,
+                                            env = env,
+                                            envDates = envDates,
+                                            dateScale = "year")
+  as.data.frame(tempExtractValues)
+  return(tempExtractValues$env[order(as.numeric(row.names(tempExtractValues)))])
 }

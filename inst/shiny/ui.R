@@ -14,7 +14,7 @@ tagList(
     tabPanel("Model", value = 'model'),
     tabPanel("Visualize", value = 'vis'),
     tabPanel("Project", value = 'proj'),
-    tabPanel("Post-Data(**)", value = 'ppdata'),
+    tabPanel("Data for Post-Processing", value = 'ppdata'),
     tabPanel("Post-processing", value = 'mask'),
     # tabPanel("Session Code", value = 'rmd'),
 
@@ -27,7 +27,8 @@ tagList(
           tags$script(src = "js/scroll.js"),
           conditionalPanel(
             "input.tabs == 'intro'",
-            selectInput("buildSDM", label = 'Use Wallace for build prediction? (**)',
+            selectInput("buildSDM",
+                        label = 'Use Wallace to build niche model/distribution model?',
                         choices = list(TRUE, FALSE))
           ),
           conditionalPanel(
@@ -525,8 +526,9 @@ tagList(
             "input.tabs == 'ppdata'",
             h4("Post-processing data (**)"),
             radioButtons("ppdataSel", "Modules Available:",
-                         choices = list("User SDM (**)" = 'userSDM',
-                                        "Post-proc rasters (**)" = 'ppRasters'),
+                         choices =
+                           list("User-provided distribution map" = 'userSDM',
+                                "Environmental rasters for masking distribution map" = 'ppRasters'),
                          selected = 'userSDM'),
             HTML('<hr>'),
             conditionalPanel(
@@ -541,7 +543,7 @@ tagList(
               "input.ppdataSel == 'userSDM'",
               uiTop(userSDM_INFO),
               userSDM_UI('ppdata_userSDM_uiID'),
-              actionButton("goUserSDM", "Load SDM(**)"),
+              actionButton("goUserSDM", "Load"),
               HTML('<hr>'),
               uiBottom(userSDM_INFO)
             )
@@ -552,8 +554,8 @@ tagList(
             h4("Post-processing"),
             radioButtons(
               "maskSel", "Modules Available:",
-              choices = list("Expert Driven: Editing using expert maps" = 'addRemMask',
-                             "Data Driven: Masking by land cover" = 'dataDrivenMask'),
+              choices = list("Add/Remove polygon" = 'addRemMask',
+                             "Mask by environmental rasters" = 'tempRasMask'),
               selected = 'addRemMask'),
             HTML('<hr>'),
             conditionalPanel(
@@ -563,16 +565,23 @@ tagList(
               actionButton("goDrawAddRem", "Select"),
               br(),
               doAddRem_UI('mask_doAddRem_uiID'),
-              actionButton("goDoAddRem", "Apply expert knowledge")
+              actionButton("goDoAddRem", "Apply")
             ),
             conditionalPanel(
-              "input.maskSel == 'dataDrivenMask'",
-              uiTop(dataAnnotate_INFO),
-              dataAnnotate_UI('mask_dataAnnotate_uiID'),
-              actionButton("goDataAnnotate", "Annotate (**)"),
+              "input.maskSel == 'tempRasMask'",
+              uiTop(tempExtract_INFO),
+              div("Step 1:", id = "step"),
+              div(paste0("Spatio-temporal matching to extract environmental ",
+                         "values at occurrence data"), id = "stepText"),
+              br(), br(),
+              tempExtract_UI('mask_tempExtract_uiID'),
+              actionButton("goTempExtract", "Extract"),
               HTML('<hr>'),
-              doDataDriven_UI('mask_doDataDriven_uiID'),
-              actionButton("goDoDataDriven", "Mask (**)")
+              div("Step 2:", id = "step"),
+              div("Masking by extracted environmental values", id = "stepText"),
+              br(), br(),
+              doTempExtract_UI('mask_doTempExtract_uiID'),
+              actionButton("goDoTempExtract", "Mask (**)")
             ),
             br(),
             actionButton("goResetPostPred", "Reset", class = 'butResPostPred'),
@@ -588,8 +597,8 @@ tagList(
               uiBottom(addRem_INFO)
             ),
             conditionalPanel(
-              "input.maskSel == 'dataDrivenMask'",
-              uiBottom(dataAnnotate_INFO)
+              "input.maskSel == 'tempRasMask'",
+              uiBottom(tempExtract_INFO)
             )
           ),
           # SESSION CODE ####

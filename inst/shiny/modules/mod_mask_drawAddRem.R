@@ -2,17 +2,17 @@ drawAddRem_UI <- function(id) {
   ns <- shiny::NS(id)
   tagList(
     tags$div(
-      radioButtons(ns("addRemSel"), label = "Select input",
-                   choices = c("draw" = 'maskDrawAddRem',
-                               "user" = 'maskUserAddRem'),
+      radioButtons(ns("addRemSel"), label = "Select polygon input",
+                   choices = c("Draw polygon" = 'maskDrawAddRem',
+                               "User-provided file(s)" = 'maskUserAddRem'),
                    inline = TRUE),
       conditionalPanel(sprintf("input['%s'] == 'maskUserAddRem'",
                                ns("addRemSel")),
                        fileInput(
                          ns("userShpAddRem"),
                          label = paste0('Upload polygon in shapefile (.shp, .shx, ',
-                                        '.dbf) or CSV file with field order ',
-                                        '(longitude, latitude)'),
+                                        '.dbf [must include all three]) or CSV file',
+                                        ' with field order (longitude, latitude)'),
                          accept = c(".csv", ".dbf", ".shx", ".shp"),
                          multiple = TRUE)
       )
@@ -109,8 +109,8 @@ addRem_MAP <- function(map, session) {
       length(unique(rasterValues)) == 2) {
     map %>%
       addLegend("bottomright", colors = c('gray', 'purple'),
-                title = "Suitability<br>(User) (**)",
-                labels = c("Absence (**)", "Presence (**)"),
+                title = "Distribution<br>map",
+                labels = c("Unsuitable", "Suitable"),
                 opacity = 1, layerId = 'expert') %>%
       addRasterImage(spp[[curSp()]]$postProc$prediction, colors = c('gray', 'purple'),
                      opacity = 0.7, group = 'mask', layerId = 'postPred',
@@ -146,6 +146,6 @@ addRem_MAP <- function(map, session) {
   }
 }
 
-addRem_INFO <- infoGenerator(modName = "Editing using expert maps (**)",
+addRem_INFO <- infoGenerator(modName = "Add/Remove polygon",
                              modAuts = "Gonzalo E. Pinilla-Buitrago, Peter Galante",
                              pkgName = "maskRangeR")
